@@ -123,6 +123,10 @@ public class ProxyServiceStarter {
             checkArgument(!isEmpty(config.getZookeeperServers()), "zookeeperServers must be provided");
         }
 
+        if(config.getProperties().getProperty("proxyLogLevel") != null){
+            System.out.println(config.getProperties().getProperty("proxyLogLevel") );
+        }
+
         java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         AuthenticationService authenticationService = new AuthenticationService(

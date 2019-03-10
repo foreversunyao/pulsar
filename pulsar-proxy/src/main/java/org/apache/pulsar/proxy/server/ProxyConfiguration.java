@@ -148,6 +148,13 @@ public class ProxyConfiguration implements PulsarConfiguration {
         doc = "Path for the file used to determine the rotation status for the proxy instance"
             + " when responding to service discovery health checks"
     )
+
+    private Integer proxyLogLevel = 1;
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "The log level of proxy, 1:basic 2:medium 3:full"
+    )
+
     private String statusFilePath;
 
     @FieldContext(
