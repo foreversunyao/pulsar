@@ -88,15 +88,9 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
 
         ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0,
                 4));
-        if (this.logLevel == 1){
             System.out.println("ServiceChannelInitializer loglevel 1 ........");
             System.out.println(this.getClass());
             ch.pipeline().addLast("handler",
-                    new ProxyConnection(proxyService, clientSslCtxRefresher == null ? null : clientSslCtxRefresher.get()));
-        } else if (this.logLevel ==2){
-            System.out.println("ServiceChannelInitializer loglevel 2........");
-            System.out.println(this.getClass());
-            ch.pipeline().addLast("handler", new ProxyConnectionDetail(proxyService));
-        }
+                    new ProxyConnection(proxyService, clientSslCtxRefresher == null ? null : clientSslCtxRefresher.get(),this.logLevel));
     }
 }

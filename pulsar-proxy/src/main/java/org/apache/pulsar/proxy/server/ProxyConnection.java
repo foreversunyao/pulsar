@@ -43,6 +43,7 @@ import org.apache.pulsar.common.api.proto.PulsarApi.CommandGetTopicsOfNamespace;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandLookupTopic;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandPartitionedTopicMetadata;
 import org.apache.pulsar.common.api.proto.PulsarApi.ServerError;
+import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     String clientAuthRole;
     String clientAuthData;
     String clientAuthMethod;
+    Integer logLevel;
 
     enum State {
         Init,
@@ -92,11 +94,12 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         return client.getCnxPool();
     }
 
-    public ProxyConnection(ProxyService proxyService, SslContext sslCtx) {
+    public ProxyConnection(ProxyService proxyService, SslContext sslCtx, Integer loglevel) {
         super(30, TimeUnit.SECONDS);
         this.service = proxyService;
         this.state = State.Init;
         this.sslCtx = sslCtx;
+        this.logLevel = loglevel;
     }
 
     @Override
@@ -151,7 +154,26 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         switch (state) {
         case Init:
         case ProxyLookupRequests:
+            System.out.println(this.logLevel);
             // Do the regular decoding for the Connected message
+            System.out.println("..................ProxyConnectionDetail...........");
+            System.out.println(msg.toString());
+            ByteBuf buffer = (ByteBuf) msg;
+            PulsarApi.BaseCommand cmd = null;
+            PulsarApi.BaseCommand.Builder cmdBuilder = null;
+            int cmdSize = (int) buffer.readUnsignedInt();
+            int writerIndex = buffer.writerIndex();
+            buffer.writerIndex(buffer.readerIndex() + cmdSize);
+            ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+            cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+            buffer.writerIndex(writerIndex);
+
+            cmdInputStream.recycle();
+            messageReceived();
+            System.out.println(cmd.getType());
+            System.out.println(cmd.getGetTopicsOfNamespace());
+            System.out.println(cmd.getMessage());
             super.channelRead(ctx, msg);
             break;
 
