@@ -43,13 +43,14 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
     private final NettySslContextBuilder serverSslCtxRefresher;
     private final ClientSslContextRefresher clientSslCtxRefresher;
     private final boolean enableTls;
+    private final Integer logLevel;
 
     public ServiceChannelInitializer(ProxyService proxyService, ProxyConfiguration serviceConfig, boolean enableTls)
             throws Exception {
         super();
         this.proxyService = proxyService;
         this.enableTls = enableTls;
-
+        this.logLevel = Integer.parseInt(serviceConfig.getProperties().getProperty("proxyLogLevel"));
         if (enableTls) {
             serverSslCtxRefresher = new NettySslContextBuilder(serviceConfig.isTlsAllowInsecureConnection(),
                     serviceConfig.getTlsTrustCertsFilePath(), serviceConfig.getTlsCertificateFilePath(),
@@ -88,5 +89,9 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
         ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
         ch.pipeline().addLast("handler",
                 new ProxyConnection(proxyService, clientSslCtxRefresher == null ? null : clientSslCtxRefresher.get()));
+        if (this.logLevel == 1){
+            System.out.println("ServiceChannelInitializer");
+            System.out.println(this.getClass());
+        }
     }
 }
