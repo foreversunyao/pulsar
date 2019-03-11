@@ -159,6 +159,7 @@ public class DirectProxyHandler {
                 }
 
                 // Do the regular decoding for the Connected message
+                System.out.println("...................DirectProxyHandler....Init..........");
                 super.channelRead(ctx, msg);
                 break;
 
@@ -167,6 +168,8 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                System.out.println("...................DirectProxyHandler....HandshakeCompleted..........");
+                System.out.println(msg.toString());
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 

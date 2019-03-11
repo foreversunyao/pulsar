@@ -156,23 +156,19 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         case ProxyLookupRequests:
             System.out.println(this.logLevel);
             // Do the regular decoding for the Connected message
-            System.out.println("..................ProxyConnectionDetail...........");
+            System.out.println("..................ProxyLookupRequests...........");
             System.out.println(msg.toString());
             ByteBuf buffer = (ByteBuf) msg;
             PulsarApi.BaseCommand cmd = null;
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
-            int cmdSize = (int) buffer.readUnsignedInt();
-            int writerIndex = buffer.writerIndex();
-            buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-            buffer.writerIndex(writerIndex);
 
             cmdInputStream.recycle();
             messageReceived();
-            System.out.println(cmd.getType());
-            System.out.println(cmd.getGetTopicsOfNamespace());
+            System.out.println(cmd.getType()); //connect
+            System.out.println(cmd.getLookupTopic());
             System.out.println(cmd.getMessage());
             super.channelRead(ctx, msg);
             break;
@@ -180,6 +176,10 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         case ProxyConnectionToBroker:
             // Pass the buffer to the outbound connection and schedule next read
             // only if we can write on the connection
+            System.out.println(this.logLevel);
+            // Do the regular decoding for the Connected message
+            System.out.println("..................ProxyConnectionToBroker...........");
+            System.out.println(msg.toString());
             ProxyService.opsCounter.inc();
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
