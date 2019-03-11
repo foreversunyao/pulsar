@@ -158,16 +158,6 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // Do the regular decoding for the Connected message
             System.out.println("..................ProxyLookupRequests...........");
             System.out.println(msg.toString());
-            ByteBuf buffer = (ByteBuf) msg;
-            PulsarApi.BaseCommand cmd = null;
-            PulsarApi.BaseCommand.Builder cmdBuilder = null;
-            ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-            cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-
-            System.out.println(cmd.getType()); //connect
-            System.out.println(cmd.getLookupTopic());
-            System.out.println(cmd.getMessage());
             super.channelRead(ctx, msg);
             break;
 
