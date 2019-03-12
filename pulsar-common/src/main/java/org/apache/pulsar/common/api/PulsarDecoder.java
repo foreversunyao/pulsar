@@ -75,7 +75,8 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         ByteBuf buffer = (ByteBuf) msg;
         BaseCommand cmd = null;
         BaseCommand.Builder cmdBuilder = null;
-
+        System.out.println("...........");
+        System.out.println(this.getClass());
         try {
             // De-serialize the command
             int cmdSize = (int) buffer.readUnsignedInt();
@@ -108,6 +109,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case LOOKUP:
+                System.out.println("LOOKUP");
                 checkArgument(cmd.hasLookupTopic());
                 handleLookup(cmd.getLookupTopic());
                 cmd.getLookupTopic().recycle();
@@ -142,11 +144,13 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case CONNECT:
+                System.out.println("CONNECT");
                 checkArgument(cmd.hasConnect());
                 handleConnect(cmd.getConnect());
                 cmd.getConnect().recycle();
                 break;
             case CONNECTED:
+                System.out.println("CONNECT");
                 checkArgument(cmd.hasConnected());
                 handleConnected(cmd.getConnected());
                 cmd.getConnected().recycle();
@@ -165,6 +169,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
+                System.out.println("CONNECT");
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
