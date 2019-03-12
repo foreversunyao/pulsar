@@ -48,6 +48,7 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
     public ServiceChannelInitializer(ProxyService proxyService, ProxyConfiguration serviceConfig, boolean enableTls)
             throws Exception {
         super();
+        System.out.println("ServiceChannelInitializer start");
         this.proxyService = proxyService;
         this.enableTls = enableTls;
         this.logLevel = Integer.parseInt(serviceConfig.getProperties().getProperty("proxyLogLevel"));
@@ -88,8 +89,7 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
 
         ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0,
                 4));
-            System.out.println("ServiceChannelInitializer loglevel 1 ........");
-            System.out.println(this.getClass());
+            System.out.println("ch pipeline ProxyConnection");
             ch.pipeline().addLast("handler",
                     new ProxyConnection(proxyService, clientSslCtxRefresher == null ? null : clientSslCtxRefresher.get(),this.logLevel));
     }

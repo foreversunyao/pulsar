@@ -62,6 +62,7 @@ public class DirectProxyHandler {
     private final Authentication authentication;
     private final SslContext sslCtx;
 
+    //output to broker
     public DirectProxyHandler(ProxyService service, ProxyConnection proxyConnection, String targetBrokerUrl,
             int protocolVersion, SslContext sslCtx) {
         this.authentication = proxyConnection.getClientAuthentication();
@@ -104,6 +105,8 @@ public class DirectProxyHandler {
         }
 
         ChannelFuture f = b.connect(targetBroker.getHost(), targetBroker.getPort());
+
+        //////outboundChannel Samuel
         outboundChannel = f.channel();
         f.addListener(future -> {
             if (!future.isSuccess()) {
@@ -145,12 +148,14 @@ public class DirectProxyHandler {
             ByteBuf command = null;
             command = Commands.newConnect(authentication.getAuthMethodName(), authData, protocolVersion, "Pulsar proxy",
                     null /* target broker */, originalPrincipal, clientAuthData, clientAuthMethod);
+
             outboundChannel.writeAndFlush(command);
             outboundChannel.read();
         }
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("state...."+state);
             switch (state) {
             case Init:
                 if (log.isDebugEnabled()) {
@@ -159,7 +164,7 @@ public class DirectProxyHandler {
                 }
 
                 // Do the regular decoding for the Connected message
-                System.out.println("...................DirectProxyHandler....Init..........");
+                System.out.println("...."+inboundChannel.localAddress().toString()+"#"+inboundChannel.remoteAddress().toString()+"#"+outboundChannel.localAddress()+"#"+outboundChannel.remoteAddress()+"...................DirectProxyHandler....Init..........");
                 super.channelRead(ctx, msg);
                 break;
 

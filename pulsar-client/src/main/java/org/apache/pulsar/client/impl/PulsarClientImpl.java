@@ -137,11 +137,13 @@ public class PulsarClientImpl implements PulsarClient {
 
     @Override
     public ProducerBuilder<byte[]> newProducer() {
+        System.out.println("newProducer..");
         return new ProducerBuilderImpl<>(this, Schema.BYTES);
     }
 
     @Override
     public <T> ProducerBuilder<T> newProducer(Schema<T> schema) {
+        System.out.println("newProducer..2");
         return new ProducerBuilderImpl<>(this, schema);
     }
 
@@ -175,6 +177,7 @@ public class PulsarClientImpl implements PulsarClient {
 
     public <T> CompletableFuture<Producer<T>> createProducerAsync(ProducerConfigurationData conf, Schema<T> schema,
           ProducerInterceptors<T> interceptors) {
+        System.out.println("newProducer..3");
         if (conf == null) {
             return FutureUtil.failedFuture(
                 new PulsarClientException.InvalidConfigurationException("Producer configuration undefined"));

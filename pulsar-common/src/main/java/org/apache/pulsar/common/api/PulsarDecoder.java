@@ -75,7 +75,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         ByteBuf buffer = (ByteBuf) msg;
         BaseCommand cmd = null;
         BaseCommand.Builder cmdBuilder = null;
-        System.out.println("..........aaa>>>.");
+        System.out.println("PulsarDecoder....");
         System.out.println(this.getClass());
         try {
             // De-serialize the command
@@ -86,7 +86,8 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             cmdBuilder = BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
-
+            System.out.println("cmd.getMessage......"+cmd.getMessage());
+            System.out.println("cmd.getProducerName........"+cmd.getProducer().getProducerName());
             cmdInputStream.recycle();
 
             if (log.isDebugEnabled()) {
@@ -94,7 +95,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             }
 
             messageReceived();
-            System.out.println("enum........."+cmd.getType().name()+".......");
+            System.out.println("enum........."+ctx.channel().remoteAddress()+cmd.getType().name()+".......");
             switch (cmd.getType()) {
             case PARTITIONED_METADATA:
                 checkArgument(cmd.hasPartitionMetadata());
@@ -152,7 +153,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 cmd.getConnect().recycle();
                 break;
             case CONNECTED:
-                System.out.println("CONNECTED");
                 System.out.println("CONNECTED........."+cmd.getConnected()+".......");
                 checkArgument(cmd.hasConnected());
                 handleConnected(cmd.getConnected());
