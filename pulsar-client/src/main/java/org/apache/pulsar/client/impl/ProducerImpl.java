@@ -121,6 +121,7 @@ public class ProducerImpl<T> extends ProducerBase<T> implements TimerTask, Conne
                         CompletableFuture<Producer<T>> producerCreatedFuture, int partitionIndex, Schema<T> schema,
                         ProducerInterceptors<T> interceptors) {
         super(client, topic, conf, producerCreatedFuture, schema, interceptors);
+        System.out.println(".......ProducerImpl.java"+partitionIndex+"..........");
         this.producerId = client.newProducerId();
         this.producerName = conf.getProducerName();
         this.partitionIndex = partitionIndex;
@@ -203,7 +204,7 @@ public class ProducerImpl<T> extends ProducerBase<T> implements TimerTask, Conne
 
     @Override
     CompletableFuture<MessageId> internalSendAsync(Message<T> message) {
-
+        System.out.println("...........internalSendAsync...");
         CompletableFuture<MessageId> future = new CompletableFuture<>();
 
         MessageImpl<T> interceptorMessage = (MessageImpl<T>) beforeSend(message);
@@ -282,7 +283,7 @@ public class ProducerImpl<T> extends ProducerBase<T> implements TimerTask, Conne
 
     public void sendAsync(Message<T> message, SendCallback callback) {
         checkArgument(message instanceof MessageImpl);
-
+        System.out.println("....sendAysnc...");
         if (!isValidProducerState(callback)) {
             return;
         }

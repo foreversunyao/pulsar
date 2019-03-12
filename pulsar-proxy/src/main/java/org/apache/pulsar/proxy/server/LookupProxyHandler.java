@@ -95,6 +95,8 @@ public class LookupProxyHandler {
                 ServiceLookupData availableBroker = null;
                 try {
                     availableBroker = service.getDiscoveryProvider().nextBroker();
+                    System.out.println("......LookupProxyHandler..."+availableBroker.getPulsarServiceUrl());
+                    System.out.println("......LookupProxyHandler..."+availableBroker.getWebServiceUrl());
                 } catch (Exception e) {
                     log.warn("[{}] Failed to get next active broker {}", clientAddress, e.getMessage(), e);
                     proxyConnection.ctx().writeAndFlush(Commands.newLookupErrorResponse(ServerError.ServiceNotReady,
@@ -123,6 +125,7 @@ public class LookupProxyHandler {
 
     private void performLookup(long clientRequestId, String topic, String brokerServiceUrl, boolean authoritative,
             int numberOfRetries) {
+        System.out.println("........performlookup"+"......"+numberOfRetries+brokerServiceUrl);
         if (numberOfRetries == 0) {
             proxyConnection.ctx().writeAndFlush(Commands.newLookupErrorResponse(ServerError.ServiceNotReady,
                     "Reached max number of redirections", clientRequestId));

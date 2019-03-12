@@ -73,6 +73,7 @@ public abstract class ProducerBase<T> extends HandlerState implements Producer<T
     abstract CompletableFuture<MessageId> internalSendAsync(Message<T> message);
 
     public MessageId send(Message<T> message) throws PulsarClientException {
+        System.out.println(">>>>>>>send .message....."+message.toString()+"#"+message.getTopicName()+"#"+message.getData().toString()+"#"+message.getKey());
         try {
             // enqueue the message to the buffer
             CompletableFuture<MessageId> sendFuture = internalSendAsync(message);

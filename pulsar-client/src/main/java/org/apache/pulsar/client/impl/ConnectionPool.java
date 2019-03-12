@@ -131,6 +131,7 @@ public class ConnectionPool implements Closeable {
      */
     public CompletableFuture<ClientCnx> getConnection(InetSocketAddress logicalAddress,
             InetSocketAddress physicalAddress) {
+        System.out.println("...........getConnection........");
         if (maxConnectionsPerHosts == 0) {
             // Disable pooling
             return createConnection(logicalAddress, physicalAddress, -1);

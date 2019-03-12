@@ -118,8 +118,10 @@ public class PulsarClientImpl implements PulsarClient {
         externalExecutorProvider = new ExecutorProvider(conf.getNumListenerThreads(), getThreadFactory("pulsar-external-listener"));
         System.out.println(".......PulsarClientImpl.....");
         if (conf.getServiceUrl().startsWith("http")) {
+            System.out.println("........http");
             lookup = new HttpLookupService(conf, eventLoopGroup);
         } else {
+            System.out.println("........else");
             lookup = new BinaryProtoLookupService(this, conf.getServiceUrl(), conf.isUseTls(), externalExecutorProvider.getExecutor());
         }
         timer = new HashedWheelTimer(getThreadFactory("pulsar-timer"), 1, TimeUnit.MILLISECONDS);
@@ -220,7 +222,7 @@ public class PulsarClientImpl implements PulsarClient {
             if (log.isDebugEnabled()) {
                 log.debug("[{}] Received topic metadata. partitions: {}", topic, metadata.partitions);
             }
-
+            System.out.println("....PulsarClientImpl.java.....createProducerAsync..."+topic+metadata.toString());
             ProducerBase<T> producer;
             if (metadata.partitions > 1) {
                 producer = new PartitionedProducerImpl<>(PulsarClientImpl.this, topic, conf, metadata.partitions,
@@ -597,6 +599,7 @@ public class PulsarClientImpl implements PulsarClient {
     }
 
     protected CompletableFuture<ClientCnx> getConnection(final String topic) {
+        System.out.println("PulsarClientImpl.java .....getConnection.......");
         TopicName topicName = TopicName.get(topic);
         return lookup.getBroker(topicName)
                 .thenCompose(pair -> cnxPool.getConnection(pair.getLeft(), pair.getRight()));
@@ -654,6 +657,7 @@ public class PulsarClientImpl implements PulsarClient {
         try {
             TopicName topicName = TopicName.get(topic);
             metadataFuture = lookup.getPartitionedTopicMetadata(topicName);
+            System.out.println("metadataFuture............");
         } catch (IllegalArgumentException e) {
             return FutureUtil.failedFuture(new PulsarClientException.InvalidConfigurationException(e.getMessage()));
         }
