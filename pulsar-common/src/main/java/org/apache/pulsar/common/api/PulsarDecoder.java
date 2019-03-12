@@ -150,7 +150,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 cmd.getConnect().recycle();
                 break;
             case CONNECTED:
-                System.out.println("CONNECT");
+                System.out.println("CONNECTED");
                 checkArgument(cmd.hasConnected());
                 handleConnected(cmd.getConnected());
                 cmd.getConnected().recycle();
@@ -169,7 +169,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
-                System.out.println("CONNECT");
+                System.out.println("MESSAGE");
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();

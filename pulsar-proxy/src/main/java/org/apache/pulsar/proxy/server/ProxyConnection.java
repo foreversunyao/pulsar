@@ -269,7 +269,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     @Override
     protected void handleLookup(CommandLookupTopic lookup) {
         checkArgument(state == State.ProxyLookupRequests);
-        System.out.println("handleLookup"+lookup.getTopic());
+        System.out.println("handleLookup...."+lookup.getTopic());
         lookupProxyHandler.handleLookup(lookup);
     }
 
@@ -333,6 +333,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                 this.clientAuthData = authData;
                 this.clientAuthMethod = authMethod;
             }
+            System.out.println(".............."+this.getClass()+"createClient");
+            System.out.println(".............."+clientConf.toString()+this.clientAuthData+protocolVersion);
             this.client = createClient(clientConf, this.clientAuthData, this.clientAuthMethod, protocolVersion);
 
             return true;

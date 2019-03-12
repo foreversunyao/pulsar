@@ -305,7 +305,7 @@ public class ClientCnx extends PulsarHandler {
     @Override
     protected void handleMessage(CommandMessage cmdMessage, ByteBuf headersAndPayload) {
         checkArgument(state == State.Ready);
-
+        System.out.println("............handleMessage"+cmdMessage.toString());
         if (log.isDebugEnabled()) {
             log.debug("{} Received a message from the server: {}", ctx.channel(), cmdMessage);
         }
@@ -363,7 +363,7 @@ public class ClientCnx extends PulsarHandler {
     @Override
     protected void handleProducerSuccess(CommandProducerSuccess success) {
         checkArgument(state == State.Ready);
-
+        System.out.println(".............handleProducerSuccess");
         if (log.isDebugEnabled()) {
             log.debug("{} Received producer success response from server: {} - producer-name: {}", ctx.channel(),
                     success.getRequestId(), success.getProducerName());
@@ -680,6 +680,7 @@ public class ClientCnx extends PulsarHandler {
     }
 
     CompletableFuture<ProducerResponse> sendRequestWithId(ByteBuf cmd, long requestId) {
+        System.out.println("............sendRequestWithId"+cmd.toString());
         CompletableFuture<ProducerResponse> future = new CompletableFuture<>();
         pendingRequests.put(requestId, future);
         ctx.writeAndFlush(cmd).addListener(writeFuture -> {
@@ -695,7 +696,7 @@ public class ClientCnx extends PulsarHandler {
 
     public CompletableFuture<MessageIdData> sendGetLastMessageId(ByteBuf request, long requestId) {
         CompletableFuture<MessageIdData> future = new CompletableFuture<>();
-
+        System.out.println("............sendGetLastMessageId"+request.toString());
         pendingGetLastMessageIdRequests.put(requestId, future);
 
         ctx.writeAndFlush(request).addListener(writeFuture -> {
@@ -805,6 +806,7 @@ public class ClientCnx extends PulsarHandler {
     }
 
     void setTargetBroker(InetSocketAddress targetBrokerAddress) {
+        System.out.println(".................ClientCnx.java"+targetBrokerAddress.getAddress());
         this.proxyToTargetBrokerAddress = String.format("%s:%d", targetBrokerAddress.getHostString(),
                 targetBrokerAddress.getPort());
     }
