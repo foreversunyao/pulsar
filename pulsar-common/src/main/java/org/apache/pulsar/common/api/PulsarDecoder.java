@@ -98,6 +98,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             switch (cmd.getType()) {
             case PARTITIONED_METADATA:
                 checkArgument(cmd.hasPartitionMetadata());
+                System.out.println("PARTITIONED_METADATA........."+cmd.getPartitionMetadata()+".......");
                 handlePartitionMetadataRequest(cmd.getPartitionMetadata());
                 cmd.getPartitionMetadata().recycle();
                 break;
@@ -117,6 +118,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
 
             case LOOKUP_RESPONSE:
                 checkArgument(cmd.hasLookupTopicResponse());
+                System.out.println("LOOKUP_RESPONSE........."+cmd.getLookupTopicResponse()+".......");
                 handleLookupResponse(cmd.getLookupTopicResponse());
                 cmd.getLookupTopicResponse().recycle();
                 break;
@@ -151,6 +153,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
             case CONNECTED:
                 System.out.println("CONNECTED");
+                System.out.println("CONNECTED........."+cmd.getConnected()+".......");
                 checkArgument(cmd.hasConnected());
                 handleConnected(cmd.getConnected());
                 cmd.getConnected().recycle();

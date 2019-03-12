@@ -304,6 +304,7 @@ public class Commands {
 
     public static ByteBufPair newSend(long producerId, long sequenceId, int numMessages, ChecksumType checksumType,
             MessageMetadata messageData, ByteBuf payload) {
+        System.out.println("........newSend");
         CommandSend.Builder sendBuilder = CommandSend.newBuilder();
         sendBuilder.setProducerId(producerId);
         sendBuilder.setSequenceId(sequenceId);
@@ -520,6 +521,7 @@ public class Commands {
 
     public static ByteBuf newProducer(String topic, long producerId, long requestId, String producerName,
                 boolean encrypted, Map<String, String> metadata, SchemaInfo schemaInfo) {
+        System.out.println("commands.java........newProducer");
         CommandProducer.Builder producerBuilder = CommandProducer.newBuilder();
         producerBuilder.setTopic(topic);
         producerBuilder.setProducerId(producerId);
@@ -561,6 +563,7 @@ public class Commands {
     }
 
     public static ByteBuf newPartitionMetadataRequest(String topic, long requestId) {
+        System.out.println("........newPartitionMetadataRequest");
         CommandPartitionedTopicMetadata.Builder partitionMetadataBuilder = CommandPartitionedTopicMetadata.newBuilder();
         partitionMetadataBuilder.setTopic(topic);
         partitionMetadataBuilder.setRequestId(requestId);
@@ -601,6 +604,7 @@ public class Commands {
 
     public static ByteBuf newLookupResponse(String brokerServiceUrl, String brokerServiceUrlTls, boolean authoritative,
             LookupType response, long requestId, boolean proxyThroughServiceUrl) {
+        System.out.println("Commands.java...."+requestId+brokerServiceUrl);
         CommandLookupTopicResponse.Builder commandLookupTopicResponseBuilder = CommandLookupTopicResponse.newBuilder();
         commandLookupTopicResponseBuilder.setBrokerServiceUrl(brokerServiceUrl);
         if (brokerServiceUrlTls != null) {

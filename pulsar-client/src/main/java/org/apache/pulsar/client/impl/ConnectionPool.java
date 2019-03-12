@@ -153,6 +153,7 @@ public class ConnectionPool implements Closeable {
         final CompletableFuture<ClientCnx> cnxFuture = new CompletableFuture<ClientCnx>();
 
         // Trigger async connect to broker
+        System.out.println("connected to Server........");
         createConnection(physicalAddress).thenAccept(channel -> {
             log.info("[{}] Connected to server", channel);
 
