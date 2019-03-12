@@ -145,7 +145,9 @@ public class ClientCnx extends PulsarHandler {
     }
 
     public ClientCnx(ClientConfigurationData conf, EventLoopGroup eventLoopGroup, int protocolVersion) {
+
         super(conf.getKeepAliveIntervalSeconds(), TimeUnit.SECONDS);
+        System.out.println("..  ClientCnx..");
         checkArgument(conf.getMaxLookupRequest() > conf.getConcurrentLookupRequest());
         this.pendingLookupRequestSemaphore = new Semaphore(conf.getConcurrentLookupRequest(), true);
         this.waitingLookupRequests = Queues
@@ -257,7 +259,7 @@ public class ClientCnx extends PulsarHandler {
 
     @Override
     protected void handleConnected(CommandConnected connected) {
-
+        System.out.println("...handleConnected");
         if (isTlsHostnameVerificationEnable && remoteHostName != null && !verifyTlsHostName(remoteHostName, ctx)) {
             // close the connection if host-verification failed with the broker
             log.warn("[{}] Failed to verify hostname of {}", ctx.channel(), remoteHostName);

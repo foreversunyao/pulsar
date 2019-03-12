@@ -121,8 +121,9 @@ public class PulsarClientImpl implements PulsarClient {
             System.out.println("........http");
             lookup = new HttpLookupService(conf, eventLoopGroup);
         } else {
-            System.out.println("........else");
+            System.out.println("........else http...");
             lookup = new BinaryProtoLookupService(this, conf.getServiceUrl(), conf.isUseTls(), externalExecutorProvider.getExecutor());
+            System.out.println(lookup.getServiceUrl());
         }
         timer = new HashedWheelTimer(getThreadFactory("pulsar-timer"), 1, TimeUnit.MILLISECONDS);
         producers = Maps.newIdentityHashMap();

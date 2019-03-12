@@ -138,7 +138,8 @@ public class ConnectionPool implements Closeable {
         }
 
         final int randomKey = signSafeMod(random.nextInt(), maxConnectionsPerHosts);
-
+        System.out.println(logicalAddress.getAddress());
+        System.out.println(physicalAddress.getHostString());
         return pool.computeIfAbsent(logicalAddress, a -> new ConcurrentHashMap<>()) //
                 .computeIfAbsent(randomKey, k -> createConnection(logicalAddress, physicalAddress, randomKey));
     }

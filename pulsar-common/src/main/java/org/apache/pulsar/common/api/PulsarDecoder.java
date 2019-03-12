@@ -75,7 +75,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         ByteBuf buffer = (ByteBuf) msg;
         BaseCommand cmd = null;
         BaseCommand.Builder cmdBuilder = null;
-        System.out.println("...........");
+        System.out.println("..........aaa>>>.");
         System.out.println(this.getClass());
         try {
             // De-serialize the command
@@ -94,7 +94,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             }
 
             messageReceived();
-
+            System.out.println("enum........."+cmd.getType().name()+".......");
             switch (cmd.getType()) {
             case PARTITIONED_METADATA:
                 checkArgument(cmd.hasPartitionMetadata());

@@ -154,9 +154,11 @@ public class LookupProxyHandler {
             clientCnx.newLookup(command, requestId).thenAccept(result -> {
                 String brokerUrl = connectWithTLS ? result.brokerUrlTls : result.brokerUrl;
                 if (result.redirect) {
+                    System.out.println("result.redirect");
                     // Need to try the lookup again on a different broker
                     performLookup(clientRequestId, topic, brokerUrl, result.authoritative, numberOfRetries - 1);
                 } else {
+                    System.out.println("else...result.redirect");
                     // Reply the same address for both TLS non-TLS. The reason
                     // is that whether we use TLS
                     // and broker is independent of whether the client itself
