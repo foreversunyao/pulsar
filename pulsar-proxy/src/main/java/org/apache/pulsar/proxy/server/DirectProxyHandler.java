@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import javax.net.ssl.SSLSession;
 
+import io.netty.buffer.Unpooled;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
 import org.apache.pulsar.common.api.Commands;
@@ -174,7 +175,8 @@ public class DirectProxyHandler {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
                 System.out.println("...................DirectProxyHandler....HandshakeCompleted..........");
-                System.out.println(msg.toString());
+                System.out.println((ByteBuf)msg);
+                System.out.println(Unpooled.wrappedBuffer((ByteBuf)msg));
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
