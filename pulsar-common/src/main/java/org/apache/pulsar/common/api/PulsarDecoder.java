@@ -87,7 +87,9 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             System.out.println("cmd.getMessage......"+cmd.getMessage());
-            System.out.println("cmd.getProducerName........"+cmd.getProducer());
+            System.out.println("cmd.getProducer........"+cmd.getProducer());
+            System.out.println("cmd.getProducerName........"+cmd.getProducer().getProducerName());
+            System.out.println("cmd.getProducerNameTopic........"+cmd.getProducer().getTopic());
             cmdInputStream.recycle();
 
             if (log.isDebugEnabled()) {
