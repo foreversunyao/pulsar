@@ -305,6 +305,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                 this.client = new PulsarClientImpl(clientConf, service.getWorkerGroup(),
                         new ProxyConnectionPool(clientConf, service.getWorkerGroup(),
                                 () -> new ClientCnx(clientConf, service.getWorkerGroup(), protocolVersion)));
+                System.out.println(".......return true");
                 return true;
             }
 

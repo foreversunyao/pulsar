@@ -169,11 +169,12 @@ public class ClientCnx extends PulsarHandler {
         super.channelActive(ctx);
         if (proxyToTargetBrokerAddress == null) {
             if (log.isDebugEnabled()) {
-                log.debug("{} Connected to broker", ctx.channel());
+                log.info("{} Connected to broker", ctx.channel());
             }
         } else {
             log.info("{} Connected through proxy to target broker at {}", ctx.channel(), proxyToTargetBrokerAddress);
         }
+        System.out.println("ClientCnx.java..."+proxyToTargetBrokerAddress+"...channelAcitve");
         // Send CONNECT command
         ctx.writeAndFlush(newConnectCommand())
                 .addListener(future -> {
@@ -191,6 +192,7 @@ public class ClientCnx extends PulsarHandler {
 
     protected ByteBuf newConnectCommand() throws PulsarClientException {
         String authData = "";
+        System.out.println("ClientCnx.java..........newConnectCommand.....");
         if (authentication.getAuthData().hasDataFromCommand()) {
             authData = authentication.getAuthData().getCommandData();
         }
@@ -300,12 +302,14 @@ public class ClientCnx extends PulsarHandler {
             log.debug("{} Got receipt for producer: {} -- msg: {} -- id: {}:{}", ctx.channel(), producerId, sequenceId,
                     ledgerId, entryId);
         }
-
+        System.out.println(producerId+"#"+sequenceId+"#"+ledgerId+"#"+entryId);
         producers.get(producerId).ackReceived(this, sequenceId, ledgerId, entryId);
     }
 
     @Override
     protected void handleMessage(CommandMessage cmdMessage, ByteBuf headersAndPayload) {
+        System.out.println("............handleMessage1"+cmdMessage.toString());
+        System.out.println("............headersAndPayload"+headersAndPayload.toString());
         checkArgument(state == State.Ready);
         System.out.println("............handleMessage"+cmdMessage.toString());
         if (log.isDebugEnabled()) {
