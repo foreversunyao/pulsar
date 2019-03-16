@@ -29,7 +29,9 @@ import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.PulsarDecoder;
+import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandConnected;
+import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +178,16 @@ public class DirectProxyHandler {
                 }
                 ByteBuf buffer = (ByteBuf)msg;
                 System.out.println("...................DirectProxyHandler....HandshakeCompleted..........");
-                super.channelRead(ctx, msg);
+                PulsarApi.BaseCommand cmd = null;
+                PulsarApi.BaseCommand.Builder cmdBuilder = null;int cmdSize = (int) buffer.readUnsignedInt();
+                int writerIndex = buffer.writerIndex();
+                buffer.writerIndex(buffer.readerIndex() + cmdSize);
+                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+                buffer.writerIndex(writerIndex);
+                cmdInputStream.recycle();
+                System.out.println("handshake..."+cmd.getType());
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 

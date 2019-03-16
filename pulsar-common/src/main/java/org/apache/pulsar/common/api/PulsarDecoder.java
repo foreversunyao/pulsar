@@ -20,6 +20,7 @@ package org.apache.pulsar.common.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.Utf8;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -62,6 +63,8 @@ import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+
 public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
 
     // Max message size is limited by max BookKeeper entry size which is 5MB, and we need to account
@@ -78,7 +81,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         System.out.println("PulsarDecoder....");
         try {
             // De-serialize the command
-            System.out.println("..buffer to string"+buffer.toString());
+            System.out.println("..buffer to string.."+buffer.toString(StandardCharsets.UTF_8));
             for (int i=0; i< buffer.capacity();i++){
                 byte b= buffer.getByte((i));
                 System.out.print((char)b);
@@ -170,6 +173,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
+                System.out.println("Message.............");
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
