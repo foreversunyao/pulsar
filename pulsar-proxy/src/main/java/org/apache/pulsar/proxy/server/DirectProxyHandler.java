@@ -21,6 +21,7 @@ package org.apache.pulsar.proxy.server;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.SSLSession;
 
@@ -176,8 +177,21 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                super.channelRead(ctx, msg);
-                //inboundChannel.writeAndFlush(msg).addListener(this);
+
+                ByteBuf buffer = (ByteBuf) msg;
+                PulsarApi.BaseCommand cmd = null;
+                PulsarApi.BaseCommand.Builder cmdBuilder = null;
+                int cmdSize = (int) buffer.readUnsignedInt();
+                int writerIndex = buffer.writerIndex();
+                buffer.writerIndex(buffer.readerIndex() + cmdSize);
+                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+                buffer.writerIndex(writerIndex);
+                cmdInputStream.recycle();
+                System.out.println(".......inDirectProxy,,,"+cmd.getType());
+                System.out.println("..buffer to send.."+buffer.toString(StandardCharsets.UTF_8));
+                inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
             default:
