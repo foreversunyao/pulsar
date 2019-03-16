@@ -178,8 +178,9 @@ public class DirectProxyHandler {
                 System.out.println("...................DirectProxyHandler....HandshakeCompleted..........");
                 for (int i=0; i< buffer.capacity();i++){
                     byte b= buffer.getByte((i));
-                    System.out.println((char)b);
+                    System.out.print((char)b);
                 }
+                System.out.println();
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
