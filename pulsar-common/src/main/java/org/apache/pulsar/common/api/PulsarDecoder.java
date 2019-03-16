@@ -76,7 +76,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         BaseCommand cmd = null;
         BaseCommand.Builder cmdBuilder = null;
         System.out.println("PulsarDecoder....");
-        System.out.println(this.getClass());
         try {
             // De-serialize the command
             System.out.println("..buffer to string"+buffer.toString());
@@ -92,9 +91,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             cmdBuilder = BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
-            System.out.println("cmd.getMessage......"+cmd.getMessage());
-            System.out.println("cmd.getProducer........"+cmd.getProducer());
-            System.out.println("cmd.getProducerName........"+cmd.getProducer().getProducerName());
             cmdInputStream.recycle();
 
             if (log.isDebugEnabled()) {
@@ -106,7 +102,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
             switch (cmd.getType()) {
             case PARTITIONED_METADATA:
                 checkArgument(cmd.hasPartitionMetadata());
-                System.out.println("PARTITIONED_METADATA........."+cmd.getPartitionMetadata()+".......");
                 handlePartitionMetadataRequest(cmd.getPartitionMetadata());
                 cmd.getPartitionMetadata().recycle();
                 break;
@@ -118,7 +113,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case LOOKUP:
-                System.out.println("LOOKUP");
                 checkArgument(cmd.hasLookupTopic());
                 handleLookup(cmd.getLookupTopic());
                 cmd.getLookupTopic().recycle();
@@ -126,7 +120,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
 
             case LOOKUP_RESPONSE:
                 checkArgument(cmd.hasLookupTopicResponse());
-                System.out.println("LOOKUP_RESPONSE........."+cmd.getLookupTopicResponse()+".......");
                 handleLookupResponse(cmd.getLookupTopicResponse());
                 cmd.getLookupTopicResponse().recycle();
                 break;
@@ -154,13 +147,11 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case CONNECT:
-                System.out.println("CONNECT");
                 checkArgument(cmd.hasConnect());
                 handleConnect(cmd.getConnect());
                 cmd.getConnect().recycle();
                 break;
             case CONNECTED:
-                System.out.println("CONNECTED........."+cmd.getConnected()+".......");
                 checkArgument(cmd.hasConnected());
                 handleConnected(cmd.getConnected());
                 cmd.getConnected().recycle();
@@ -179,7 +170,6 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
-                System.out.println("MESSAGE");
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
