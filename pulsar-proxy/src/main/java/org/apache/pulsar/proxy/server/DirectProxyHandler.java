@@ -189,7 +189,7 @@ public class DirectProxyHandler {
                 cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
                 buffer.writerIndex(writerIndex);
                 cmdInputStream.recycle();
-                System.out.println(".......inDirectProxy,,,"+cmd.getType());
+                //System.out.println(".......inDirectProxy,,,"+cmd.getType());
                 System.out.println("..buffer to send.."+buffer.toString(StandardCharsets.UTF_8));
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
