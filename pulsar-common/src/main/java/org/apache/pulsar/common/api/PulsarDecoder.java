@@ -173,7 +173,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
-                System.out.println("Message.............");
+
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
@@ -186,8 +186,9 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case SEND: {
+                System.out.println(".....Send...");
                 checkArgument(cmd.hasSend());
-
+                System.out.println("..buffer to send.."+buffer.toString(StandardCharsets.UTF_8));
                 // Store a buffer marking the content + headers
                 ByteBuf headersAndPayload = buffer.markReaderIndex();
                 handleSend(cmd.getSend(), headersAndPayload);
