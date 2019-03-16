@@ -174,9 +174,12 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                ByteBuf buffer = (ByteBuf)msg;
                 System.out.println("...................DirectProxyHandler....HandshakeCompleted..........");
-                System.out.println((ByteBuf)msg);
-                System.out.println(Unpooled.wrappedBuffer((ByteBuf)msg));
+                for (int i=0; i< buffer.capacity();i++){
+                    byte b= buffer.getByte((i));
+                    System.out.println((char)b);
+                }
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
