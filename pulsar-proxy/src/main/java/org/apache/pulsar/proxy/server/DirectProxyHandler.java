@@ -178,7 +178,7 @@ public class DirectProxyHandler {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
                 System.out.println("call Decoder manually");
-                this.channelRead(this.ctx,msg);
+                super.channelRead(this.ctx,msg);
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
