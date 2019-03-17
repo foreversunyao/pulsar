@@ -177,18 +177,6 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                ByteBuf buffer = (ByteBuf) msg;
-                PulsarApi.BaseCommand cmd = null;
-                PulsarApi.BaseCommand.Builder cmdBuilder = null;
-                int cmdSize = (int) buffer.readUnsignedInt();
-                int writerIndex = buffer.writerIndex();
-                buffer.writerIndex(buffer.readerIndex() + cmdSize);
-                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-                buffer.writerIndex(writerIndex);
-                cmdInputStream.recycle();
-                System.out.println("...handshakecompleted..."+cmd.getMessage());
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
