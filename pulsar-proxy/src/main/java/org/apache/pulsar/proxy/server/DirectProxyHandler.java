@@ -177,29 +177,11 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                inboundChannel.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0,
-                        4));
-                ByteBuf buffer = (ByteBuf) msg;
-                PulsarApi.BaseCommand cmd = null;
-                PulsarApi.BaseCommand.Builder cmdBuilder = null;
-                int cmdSize = (int) buffer.readUnsignedInt();
-                int writerIndex = buffer.writerIndex();
-                buffer.writerIndex(buffer.readerIndex() + cmdSize);
-                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-                buffer.writerIndex(writerIndex);
-                cmdInputStream.recycle();
-                System.out.println(".......inDirectProxy,,,"+cmd.getType());
-                System.out.println("..buffer to send.."+buffer.toString(StandardCharsets.UTF_8));
-                cmdBuilder.recycle();
-                cmd.recycle();
-                buffer.release();
-                inboundChannel.pipeline().remove("frameDecoder");
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
             default:
+                System.out.println("default...");
                 break;
             }
 
@@ -244,6 +226,7 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
+                System.out.println(inboundChannel);
                 inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
 
