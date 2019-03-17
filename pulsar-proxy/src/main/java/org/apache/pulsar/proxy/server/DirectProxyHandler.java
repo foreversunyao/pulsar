@@ -177,8 +177,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                System.out.println("call Decoder manually");
-                super.channelRead(this.ctx,msg);
+
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
@@ -229,7 +228,7 @@ public class DirectProxyHandler {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
 
-                //inboundChannel.pipeline().remove("frameDecoder");
+                inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
