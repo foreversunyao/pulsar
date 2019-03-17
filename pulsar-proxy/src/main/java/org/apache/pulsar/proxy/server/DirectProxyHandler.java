@@ -177,7 +177,8 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-
+                inboundChannel.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0,
+                        4));
                 ByteBuf buffer = (ByteBuf) msg;
                 PulsarApi.BaseCommand cmd = null;
                 PulsarApi.BaseCommand.Builder cmdBuilder = null;
@@ -194,6 +195,7 @@ public class DirectProxyHandler {
                 cmdBuilder.recycle();
                 cmd.recycle();
                 buffer.release();
+                inboundChannel.pipeline().remove("frameDecoder");
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
@@ -237,7 +239,7 @@ public class DirectProxyHandler {
             }
 
             state = BackendState.HandshakeCompleted;
-
+            System.out.println("...handlerConnected....");
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
