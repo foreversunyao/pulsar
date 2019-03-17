@@ -229,7 +229,7 @@ public class DirectProxyHandler {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
 
-                inboundChannel.pipeline().remove("frameDecoder");
+                //inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
