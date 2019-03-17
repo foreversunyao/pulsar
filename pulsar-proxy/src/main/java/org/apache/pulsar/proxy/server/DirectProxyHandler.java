@@ -240,7 +240,7 @@ public class DirectProxyHandler {
                 }
 
                 //inboundChannel.pipeline().remove("frameDecoder");
-                //outboundChannel.pipeline().remove("frameDecoder");
+                outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
                 System.out.println("...handlerConnected....");
