@@ -151,6 +151,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         switch (state) {
         case Init:
         case ProxyLookupRequests:
+            System.out.println("#ProxyConnection#ProxyLookupRequests...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
             // Do the regular decoding for the Connected message
             super.channelRead(ctx, msg);
             break;
@@ -158,6 +159,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         case ProxyConnectionToBroker:
             // Pass the buffer to the outbound connection and schedule next read
             // only if we can write on the connection
+            System.out.println("#ProxyConnection#ProxyConnectionToBroker...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
             ProxyService.opsCounter.inc();
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());

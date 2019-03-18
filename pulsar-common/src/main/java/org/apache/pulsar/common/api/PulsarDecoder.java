@@ -77,7 +77,10 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
         ByteBuf buffer = (ByteBuf) msg;
         BaseCommand cmd = null;
         BaseCommand.Builder cmdBuilder = null;
-
+        System.out.println("#PuplsarDecoder");
+        for (int i=0;i<buffer.capacity();i++){
+            System.out.print(buffer.getByte(i));
+        }
         try {
             // De-serialize the command
             int cmdSize = (int) buffer.readUnsignedInt();
