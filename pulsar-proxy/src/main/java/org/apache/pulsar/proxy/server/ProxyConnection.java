@@ -182,10 +182,9 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             }
             System.out.println();
             System.out.println("To Broker buffer output in Connection finished ^");
-
+            directProxyHandler.setFrontEndChannel(ctx.channel());
+            directProxyHandler.setStartTime(startTime);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
-            long proxyCost = System.currentTimeMillis() - startTime;
-            System.out.println("ProxyCost:"+proxyCost);
             break;
 
         default:

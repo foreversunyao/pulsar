@@ -58,14 +58,26 @@ public class DirectProxyHandler {
     private String originalPrincipal;
     private String clientAuthData;
     private String clientAuthMethod;
+    private Channel frontEndChannel;
+    private Long startTime;
     private int protocolVersion;
     public static final String TLS_HANDLER = "tls";
 
     private final Authentication authentication;
     private final SslContext sslCtx;
 
+
+    public void setFrontEndChannel(Channel frontEndChannel) {
+        this.frontEndChannel = frontEndChannel;
+    }
+
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
+    }
+
     public DirectProxyHandler(ProxyService service, ProxyConnection proxyConnection, String targetBrokerUrl,
-            int protocolVersion, SslContext sslCtx) {
+                              int protocolVersion, SslContext sslCtx) {
         this.authentication = proxyConnection.getClientAuthentication();
         this.inboundChannel = proxyConnection.ctx().channel();
         this.originalPrincipal = proxyConnection.clientAuthRole;
@@ -120,7 +132,7 @@ public class DirectProxyHandler {
     }
 
     enum BackendState {
-        Init, HandshakeCompleted
+        Init, HandshakeCompleted, Ready
     }
 
     public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
@@ -170,16 +182,13 @@ public class DirectProxyHandler {
                 break;
 
             case HandshakeCompleted:
-                System.out.println("#HandshakeCompleted...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
+                //System.out.println("#HandshakeCompleted...#remote:"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
                 ProxyService.opsCounter.inc();
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                startTime = System.currentTimeMillis();
-                System.out.println("sentstatTime..."+startTime);
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
-
             default:
                 System.out.println("#receive..");
                 break;
@@ -192,7 +201,7 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             System.out.println("#DirectoperationComplete");
-            System.out.println("Brokercost:"+(System.currentTimeMillis()-startTime));
+            System.out.println("#Sent:"+(System.currentTimeMillis()-startTime)+"#"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
             if (future.isSuccess()) {
 
                 outboundChannel.read();
