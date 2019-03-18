@@ -176,7 +176,7 @@ public class DirectProxyHandler {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
                 startTime = System.currentTimeMillis();
-                System.out.println("sentstatTime..."+startTime):
+                System.out.println("sentstatTime..."+startTime);
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
