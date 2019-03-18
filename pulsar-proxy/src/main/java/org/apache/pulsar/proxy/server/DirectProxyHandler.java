@@ -131,6 +131,8 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
 
+        private  long startTime ;
+
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             this.config = config;
             this.protocolVersion = protocolVersion;
@@ -153,6 +155,8 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+
+
             switch (state) {
             case Init:
                 System.out.println("#Init...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
@@ -171,6 +175,8 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                startTime = System.currentTimeMillis();
+                System.out.println("sentstatTime..."+startTime):
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
@@ -186,7 +192,9 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             System.out.println("#DirectoperationComplete");
+            System.out.println("Brokercost:"+((System.currentTimeMillis()-startTime)/1000L));
             if (future.isSuccess()) {
+
                 outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
