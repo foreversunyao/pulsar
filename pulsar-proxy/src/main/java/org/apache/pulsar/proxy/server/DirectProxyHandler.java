@@ -182,9 +182,9 @@ public class DirectProxyHandler {
                 cmdBuilder = PulsarApi.BaseCommand.newBuilder();
                 cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
                 System.out.println();
-                //System.out.println("#HandshakeCompleted..cmd"+cmd.getType());
+                System.out.println("#HandshakeCompleted..cmd"+cmd.getType());
                 inboundChannel.writeAndFlush(msg).addListener(this);
-                buffer.release();
+                //buffer.release();
                 break;
 
             default:
