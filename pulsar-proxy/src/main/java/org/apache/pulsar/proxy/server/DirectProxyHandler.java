@@ -192,7 +192,7 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             System.out.println("#DirectoperationComplete");
-            System.out.println("Brokercost:"+((System.currentTimeMillis()-startTime)/1000L));
+            System.out.println("Brokercost:"+(System.currentTimeMillis()-startTime));
             if (future.isSuccess()) {
 
                 outboundChannel.read();
