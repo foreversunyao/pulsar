@@ -175,6 +175,7 @@ public class DirectProxyHandler {
                 break;
 
             default:
+                System.out.prinltn("receive");
                 break;
             }
 
@@ -184,6 +185,7 @@ public class DirectProxyHandler {
         public void operationComplete(Future<Void> future) throws Exception {
             // This is invoked when the write operation on the paired connection
             // is completed
+            System.out.println("#DirectoperationComplete");
             if (future.isSuccess()) {
                 outboundChannel.read();
             } else {

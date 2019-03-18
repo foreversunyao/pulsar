@@ -189,6 +189,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void operationComplete(Future<Void> future) throws Exception {
         // This is invoked when the write operation on the paired connection is
         // completed
+        System.out.println("##operationComplete..ProxyConnection");
         if (future.isSuccess()) {
             ctx.read();
         } else {
@@ -235,6 +236,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // connection
             // there and just pass bytes in both directions
             state = State.ProxyConnectionToBroker;
+            System.out.println();
             directProxyHandler = new DirectProxyHandler(service, this, connect.getProxyToBrokerUrl(),
                     protocolVersionToAdvertise, sslCtx);
             cancelKeepAliveTask();
