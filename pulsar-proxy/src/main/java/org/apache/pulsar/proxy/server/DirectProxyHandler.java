@@ -171,11 +171,6 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                ByteBuf buffer = (ByteBuf) msg;
-                for (int i=0;i<buffer.capacity();i++){
-                    System.out.print((char)buffer.getByte(i));
-                }
-                System.out.println("^^^");
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
