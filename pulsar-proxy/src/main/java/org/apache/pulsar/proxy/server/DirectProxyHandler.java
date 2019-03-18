@@ -175,7 +175,7 @@ public class DirectProxyHandler {
                 for (int i=0;i<buffer.capacity();i++){
                     System.out.print((char)buffer.getByte(i));
                 }
-                System.out.prinltn("");
+                System.out.println("^^^");
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
