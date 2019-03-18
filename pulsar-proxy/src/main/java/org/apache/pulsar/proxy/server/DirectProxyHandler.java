@@ -153,6 +153,7 @@ public class DirectProxyHandler {
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
             switch (state) {
             case Init:
+                System.out.println("#Init...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Received msg on broker connection: {}", inboundChannel, outboundChannel,
                             msg.getClass());
@@ -163,9 +164,14 @@ public class DirectProxyHandler {
                 break;
 
             case HandshakeCompleted:
+                System.out.println("#HandshakeCompleted...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
                 ProxyService.opsCounter.inc();
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                }
+                ByteBuf buffer = (ByteBuf) msg;
+                for (int i=0;i<buffer.capacity();i++){
+                    System.out.print(buffer.getByte(i));
                 }
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
@@ -196,6 +202,7 @@ public class DirectProxyHandler {
 
         @Override
         protected void handleConnected(CommandConnected connected) {
+            System.out.println("#DirectProxyHandler.java#handleConnection.."+connected.getProtocolVersion());
             if (log.isDebugEnabled()) {
                 log.debug("[{}] [{}] Received Connected from broker", inboundChannel, outboundChannel);
             }
