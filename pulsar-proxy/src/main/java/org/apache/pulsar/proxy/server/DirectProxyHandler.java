@@ -175,16 +175,7 @@ public class DirectProxyHandler {
                 for (int i=0;i<buffer.capacity();i++){
                     System.out.print((char)buffer.getByte(i));
                 }
-                PulsarApi.BaseCommand cmd = null;
-                PulsarApi.BaseCommand.Builder cmdBuilder = null;
-
-                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-                System.out.println();
-                //System.out.println("#HandshakeCompleted..cmd"+cmd.getType());
                 inboundChannel.writeAndFlush(msg).addListener(this);
-                //buffer.release();
                 break;
 
             default:
