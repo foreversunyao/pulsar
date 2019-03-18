@@ -177,7 +177,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println("ProxyConnectionToBroker.........."+msg.toString());
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             System.out.println("call Decoder manually");
-            super.channelRead(ctx,msg);
+
             break;
 
         default:
@@ -202,6 +202,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
      */
     @Override
     protected void handleConnect(CommandConnect connect) {
+        System.out.println("Proxy handleConnect.......");
         checkArgument(state == State.Init);
         remoteEndpointProtocolVersion = connect.getProtocolVersion();
         if (LOG.isDebugEnabled()) {
