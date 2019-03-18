@@ -182,7 +182,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             buffer.writerIndex(writerIndex);
 
             cmdInputStream.recycle();
-            System.out.println("ProxyConnection#"+cmd.getType());
+
             }
             finally{
                 if (cmdBuilder != null) {
