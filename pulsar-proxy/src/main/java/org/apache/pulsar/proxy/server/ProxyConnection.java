@@ -150,18 +150,22 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buffer = (ByteBuf) msg;
+        long startTime = System.currentTimeMillis();
         switch (state) {
         case Init:
         case ProxyLookupRequests:
             System.out.println("#ProxyConnection#ProxyLookupRequests...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());
             // Do the regular decoding for the Connected message
-
+/*
             for (int i=0;i<buffer.capacity();i++){
                 System.out.print((char)buffer.getByte(i));
             }
             System.out.println();
             System.out.println("Lookup buffer output in Connection finished ^");
+            */
             super.channelRead(ctx, msg);
+            long costCreateConnection = (System.currentTimeMillis() - startTime)/1000L;
+            System.out.println("costCreateConnection:"+costCreateConnection);
             break;
 
         case ProxyConnectionToBroker:
@@ -177,7 +181,11 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             }
             System.out.println();
             System.out.println("To Broker buffer output in Connection finished ^");
+
+            System.out.println("costCreateConnection:"+costCreateConnection);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
+            long sendCost = (System.currentTimeMillis() - startTime)/1000L;
+            System.out.println("SendCost:"+sendCost);
             break;
 
         default:
