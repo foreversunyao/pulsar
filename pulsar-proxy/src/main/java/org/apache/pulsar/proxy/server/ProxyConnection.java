@@ -181,7 +181,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println("To Broker buffer output in Connection finished ^");
             directProxyHandler.setFrontEndChannel(ctx.channel());
             directProxyHandler.setStartTime(startTime);
-            directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
+            directProxyHandler.outboundChannel.write(msg).addListener(this);
+            //directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
         default:
