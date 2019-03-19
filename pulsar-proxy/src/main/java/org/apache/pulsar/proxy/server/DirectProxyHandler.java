@@ -223,6 +223,7 @@ public class DirectProxyHandler {
 
                 // Start reading from both connections
                 inboundChannel.read();
+                Thread.sleep(3000);
                 System.out.println("starting reading");
                 outboundChannel.read();
             });
