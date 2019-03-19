@@ -88,7 +88,8 @@ public class DirectProxyHandler {
                 }
                 ch.pipeline().addLast("frameDecoder",
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
-                ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendHandler(config, protocolVersion));
+                ch.pipeline().addLast("proxyBackendConnectionHandler", new ProxyBackendConnectionHandler(config, protocolVersion));
+                ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendConnectionHandler(config, protocolVersion));
             }
         });
 
@@ -105,6 +106,7 @@ public class DirectProxyHandler {
 
         ChannelFuture f = b.connect(targetBroker.getHost(), targetBroker.getPort());
         outboundChannel = f.channel();
+
         f.addListener(future -> {
             if (!future.isSuccess()) {
                 // Close the connection if the connection attempt has failed.
@@ -112,16 +114,18 @@ public class DirectProxyHandler {
                 return;
             }
             final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
-                    .get("proxyOutboundHandler");
+                    .get("proxyBackendConnectionHandler");
             cnx.setRemoteHostName(targetBroker.getHost());
         });
     }
 
     enum BackendState {
-        Init, HandshakeCompleted
+        Init, HandshakeCompleted, Ready
     }
 
-    public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
+
+
+    public class ProxyBackendConnectionHandler  extends PulsarDecoder implements FutureListener<Void> {
 
         private BackendState state = BackendState.Init;
         private String remoteHostName;
@@ -129,7 +133,7 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
 
-        public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
+        public ProxyBackendConnectionHandler(ProxyConfiguration config, int protocolVersion) {
             this.config = config;
             this.protocolVersion = protocolVersion;
         }
@@ -152,27 +156,29 @@ public class DirectProxyHandler {
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
             switch (state) {
-            case Init:
-                if (log.isDebugEnabled()) {
-                    log.debug("[{}] [{}] Received msg on broker connection: {}", inboundChannel, outboundChannel,
-                            msg.getClass());
-                }
+                case Init:
+                    if (log.isDebugEnabled()) {
+                        log.debug("[{}] [{}] Received msg on broker connection: {}", inboundChannel, outboundChannel,
+                                msg.getClass());
+                    }
 
-                // Do the regular decoding for the Connected message
-                super.channelRead(ctx, msg);
-                break;
+                    // Do the regular decoding for the Connected message
+                    super.channelRead(ctx, msg);
+                    break;
+                case HandshakeCompleted:
+                    System.out.println("6,HandshakeCompleted...........");
+                    ctx.write(msg);
+                case Ready:
+                    ProxyService.opsCounter.inc();
+                    if (msg instanceof ByteBuf) {
+                        ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                    }
 
-            case HandshakeCompleted:
-                ProxyService.opsCounter.inc();
-                if (msg instanceof ByteBuf) {
-                    ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
-                }
-                System.out.println("HandshakeCompleted...........");
-                inboundChannel.writeAndFlush(msg).addListener(this);
-                break;
+                    inboundChannel.writeAndFlush(msg).addListener(this);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
 
         }
@@ -182,8 +188,8 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             if (future.isSuccess()) {
-                System.out.println("outbound success...");
-                outboundChannel.read();
+                System.out.println("7,outbound success...");
+           //     outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
@@ -213,6 +219,95 @@ public class DirectProxyHandler {
 
             state = BackendState.HandshakeCompleted;
 
+        }
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) {
+            inboundChannel.close();
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+            log.warn("[{}] [{}] Caught exception: {}", inboundChannel, outboundChannel, cause.getMessage(), cause);
+            ctx.close();
+        }
+
+
+        private boolean verifyTlsHostName(String hostname, ChannelHandlerContext ctx) {
+            ChannelHandler sslHandler = ctx.channel().pipeline().get("tls");
+
+            SSLSession sslSession = null;
+            if (sslHandler != null) {
+                sslSession = ((SslHandler) sslHandler).engine().getSession();
+                return (new DefaultHostnameVerifier()).verify(hostname, sslSession);
+            }
+            return false;
+        }
+    }
+
+    public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
+
+        private BackendState state = BackendState.Init;
+        private String remoteHostName;
+        protected ChannelHandlerContext ctx;
+        private ProxyConfiguration config;
+        private int protocolVersion;
+
+        public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
+            this.config = config;
+            this.protocolVersion = protocolVersion;
+        }
+
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            this.ctx = ctx;
+        }
+
+        @Override
+        public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            switch (state) {
+            case Init:
+                break;
+
+            case Ready:
+                ProxyService.opsCounter.inc();
+                if (msg instanceof ByteBuf) {
+                    ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                }
+                System.out.println("6,HandshakeCompleted...........");
+                inboundChannel.writeAndFlush(msg).addListener(this);
+                break;
+
+            default:
+                break;
+            }
+
+        }
+
+        @Override
+        public void operationComplete(Future<Void> future) throws Exception {
+            // This is invoked when the write operation on the paired connection
+            // is completed
+            if (future.isSuccess()) {
+                System.out.println("7,outbound success...");
+                outboundChannel.read();
+            } else {
+                log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
+                        outboundChannel, future.cause());
+                inboundChannel.close();
+            }
+        }
+
+        @Override
+        protected void messageReceived() {
+            // no-op
+        }
+
+        @Override
+        protected void handleConnected(CommandConnected connected) {
+
+
+            state = BackendState.Ready;
+
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
@@ -223,8 +318,7 @@ public class DirectProxyHandler {
 
                 // Start reading from both connections
                 inboundChannel.read();
-                Thread.sleep(3000);
-                System.out.println("starting reading");
+                System.out.println("3,starting reading");
                 outboundChannel.read();
             });
         }

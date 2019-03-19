@@ -162,7 +162,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
             }
-            System.out.println("3,ProxyConnectionToBroker............");
+            System.out.println("4,ProxyConnectionToBroker............");
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
@@ -176,7 +176,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         // This is invoked when the write operation on the paired connection is
         // completed
         if (future.isSuccess()) {
-            System.out.println("4,paired connection.....");
+            System.out.println("5,paired connection.....");
             ctx.read();
         } else {
             LOG.warn("[{}] Error in writing to inbound channel. Closing", remoteAddress, future.cause());
