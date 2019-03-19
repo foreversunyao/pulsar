@@ -73,6 +73,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     String clientAuthRole;
     String clientAuthData;
     String clientAuthMethod;
+    long startTime;
 
     enum State {
         Init,
@@ -150,8 +151,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buffer = (ByteBuf) msg;
-        long startTime = System.currentTimeMillis();
-        System.out.println("Connectionstarttime"+startTime);
+        startTime = System.currentTimeMillis();
+        System.out.println("#Connectionstarttime#"+startTime);
         switch (state) {
         case Init:
         case ProxyLookupRequests:
@@ -177,10 +178,6 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
             }
-            for (int i=0;i<buffer.capacity();i++){
-                System.out.print((char)buffer.getByte(i));
-            }
-            System.out.println();
             System.out.println("To Broker buffer output in Connection finished ^");
             directProxyHandler.setFrontEndChannel(ctx.channel());
             directProxyHandler.setStartTime(startTime);
