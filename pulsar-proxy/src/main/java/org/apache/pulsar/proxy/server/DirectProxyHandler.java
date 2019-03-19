@@ -143,8 +143,6 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
 
-        private  long startTime ;
-
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             this.config = config;
             this.protocolVersion = protocolVersion;
