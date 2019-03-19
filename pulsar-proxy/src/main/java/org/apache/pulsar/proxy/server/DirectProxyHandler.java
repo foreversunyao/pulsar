@@ -106,7 +106,7 @@ public class DirectProxyHandler {
 
         ChannelFuture f = b.connect(targetBroker.getHost(), targetBroker.getPort());
         outboundChannel = f.channel();
-
+        System.out.println("creating conn...");
         f.addListener(future -> {
             if (!future.isSuccess()) {
                 // Close the connection if the connection attempt has failed.
@@ -155,6 +155,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("ProxyBackendConnectionHandler state:"+state);
             switch (state) {
                 case Init:
                     if (log.isDebugEnabled()) {
@@ -267,6 +268,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("ProxyBackendHandler state:"+state);
             switch (state) {
             case Init:
                 break;
