@@ -113,7 +113,7 @@ public class DirectProxyHandler {
                 inboundChannel.close();
                 return;
             }
-            final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
+            final ProxyBackendConnectionHandler cnx = (ProxyBackendConnectionHandler) outboundChannel.pipeline()
                     .get("proxyBackendConnectionHandler");
             cnx.setRemoteHostName(targetBroker.getHost());
         });
@@ -231,6 +231,9 @@ public class DirectProxyHandler {
             ctx.close();
         }
 
+        public void setRemoteHostName(String remoteHostName) {
+            this.remoteHostName = remoteHostName;
+        }
 
         private boolean verifyTlsHostName(String hostname, ChannelHandlerContext ctx) {
             ChannelHandler sslHandler = ctx.channel().pipeline().get("tls");
