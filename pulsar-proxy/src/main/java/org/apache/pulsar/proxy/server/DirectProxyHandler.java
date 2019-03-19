@@ -189,6 +189,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                System.out.println("HandshakeCompleted");
                 ctx.write(msg);
                 //parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
 
@@ -209,7 +210,7 @@ public class DirectProxyHandler {
             //System.out.println("#Sent:"+(System.currentTimeMillis()-startTime)+"#"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
             if (future.isSuccess()) {
                System.out.println("####connectioned successfully............");
-             //   outboundChannel.read();
+               outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
