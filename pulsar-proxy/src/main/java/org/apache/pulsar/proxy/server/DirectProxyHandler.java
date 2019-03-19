@@ -210,7 +210,7 @@ public class DirectProxyHandler {
             //System.out.println("#Sent:"+(System.currentTimeMillis()-startTime)+"#"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
             if (future.isSuccess()) {
                System.out.println("####connectioned successfully............");
-               outboundChannel.read();
+               //outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
@@ -314,7 +314,7 @@ public class DirectProxyHandler {
 
                 case Send:
                     System.out.println("#Sending..........");
-                    //parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
+                    parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
                     inboundChannel.writeAndFlush(msg).addListener(this);
                 default:
                     break;
