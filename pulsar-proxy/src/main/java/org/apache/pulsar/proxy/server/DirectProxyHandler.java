@@ -217,12 +217,13 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-                System.out.println("handleconnected..direcgtproxy");
+                System.out.println("2,handleconnected..direcgtproxy");
                 inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
                 inboundChannel.read();
+                System.out.println("starting reading");
                 outboundChannel.read();
             });
         }
