@@ -313,7 +313,7 @@ public class DirectProxyHandler {
 
                 case Send:
                     System.out.println("#Sending..........");
-                    parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
+                    //parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
                     inboundChannel.writeAndFlush(msg).addListener(this);
                 default:
                     break;
