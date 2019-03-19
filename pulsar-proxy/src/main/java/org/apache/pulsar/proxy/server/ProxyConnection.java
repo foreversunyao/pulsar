@@ -176,6 +176,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         // This is invoked when the write operation on the paired connection is
         // completed
         if (future.isSuccess()) {
+            future.await(5);
             System.out.println("paired connection.....");
             ctx.read();
         } else {
@@ -216,7 +217,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             close();
             return;
         }
-
+        System.out.println("create backend connection....");
         if (connect.hasProxyToBrokerUrl()) {
             // Client already knows which broker to connect. Let's open a
             // connection
