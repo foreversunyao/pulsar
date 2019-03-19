@@ -190,7 +190,7 @@ public class DirectProxyHandler {
             // is completed
             if (future.isSuccess()) {
                 System.out.println("7,outbound success...");
-           //     outboundChannel.read();
+                //outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
@@ -219,6 +219,7 @@ public class DirectProxyHandler {
             }
 
             state = BackendState.HandshakeCompleted;
+            System.out.println("ProxyBackendConnectionHandler handlerConnected:");
 
         }
         @Override
