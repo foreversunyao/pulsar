@@ -186,6 +186,7 @@ public class DirectProxyHandler {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
                 inboundChannel.writeAndFlush(msg).addListener(this);
+                new ParserProxyHandler(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
                 break;
             default:
                 System.out.println("#receive..");
@@ -199,9 +200,8 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             System.out.println("#DirectoperationComplete");
-            System.out.println("#Sent:"+(System.currentTimeMillis()-startTime)+"#"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
+            //System.out.println("#Sent:"+(System.currentTimeMillis()-startTime)+"#"+ctx.channel().remoteAddress()+"#local:"+ctx.channel().localAddress()+"#client:"+frontEndChannel.remoteAddress()+"#frontendlocal:"+frontEndChannel.localAddress());
             if (future.isSuccess()) {
-
                 outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
