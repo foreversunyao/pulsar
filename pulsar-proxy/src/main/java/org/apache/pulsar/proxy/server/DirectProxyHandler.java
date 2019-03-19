@@ -170,7 +170,7 @@ public class DirectProxyHandler {
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
 
-            System.out.println();
+            System.out.println("DirectProxyHandler....channelread....");
             switch (state) {
             case Init:
                 System.out.println("#Init...remote:"+ctx.channel().remoteAddress()+"local:"+ctx.channel().localAddress());

@@ -152,7 +152,6 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buffer = (ByteBuf) msg;
         startTime = System.currentTimeMillis();
-        System.out.println("#Connectionstarttime#"+startTime);
         switch (state) {
         case Init:
         case ProxyLookupRequests:
@@ -181,7 +180,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println("To Broker buffer output in Connection finished ^");
             directProxyHandler.setFrontEndChannel(ctx.channel());
             directProxyHandler.setStartTime(startTime);
-            directProxyHandler.outboundChannel.read();
+            directProxyHandler.outboundChannel.write(msg).addListener(this);
             //directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
