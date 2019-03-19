@@ -186,8 +186,9 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                inboundChannel.writeAndFlush(msg).addListener(this);
                 parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
+                inboundChannel.writeAndFlush(msg).addListener(this);
+
                 break;
             default:
                 break;

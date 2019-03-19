@@ -64,8 +64,8 @@ public class ParserProxyHandler extends PulsarDecoder {
            System.out.print("#");
             // System.out.print(buffer.getByte(i));
         }
-        msgDecoder.channelRead(null,msg);
-        //super.channelRead(null,msg);
+        //msgDecoder.channelRead(null,msg);
+        super.channelRead(null,msg);
         System.out.println();
         log.info("{}#{}#{}#{}#{}#{}",frontEndChannel.remoteAddress(),frontEndChannel.localAddress(),backEndChannel.localAddress(),backEndChannel.remoteAddress(),costProxy,buffer.toString());
     }
