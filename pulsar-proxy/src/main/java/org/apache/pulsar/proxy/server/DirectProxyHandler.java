@@ -242,7 +242,7 @@ public class DirectProxyHandler {
 
             state = BackendState.HandshakeCompleted;
             System.out.println("Handshake......");
-            //inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
+            inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
             //    if (log.isDebugEnabled()) {
             //        log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
              //   }
@@ -252,7 +252,7 @@ public class DirectProxyHandler {
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
-            //});
+            });
         }
 
         @Override
