@@ -56,7 +56,8 @@ public class ParserProxyHandler extends PulsarDecoder {
             e.printStackTrace();
         }
     }
-    private void parseMsg(Object msg) throws Exception {
+
+    private void parseMsg(Object msg)  {
         ByteBuf buffer = (ByteBuf) msg;
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
