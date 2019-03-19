@@ -22,6 +22,7 @@ package org.apache.pulsar.proxy.server;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.pulsar.common.api.PulsarDecoder;
 import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class ParserProxyHandler extends PulsarDecoder {
     private Channel backEndChannel;
 
     private Long costProxy;
-
+    //private LengthFieldBasedFrameDecoder msgDecoder=  new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4);
 
 
     @Override
@@ -51,7 +52,7 @@ public class ParserProxyHandler extends PulsarDecoder {
         this.costProxy = costProxy;
         this.parseMsg(msg);
     }
-    private void parseMsg(Object msg) {
+    private void parseMsg(Object msg) throws Exception {
         ByteBuf buffer = (ByteBuf) msg;
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
@@ -59,6 +60,7 @@ public class ParserProxyHandler extends PulsarDecoder {
            System.out.print("#");
             // System.out.print(buffer.getByte(i));
         }
+        super.channelRead(null,msg);
         System.out.println();
         log.info("{}#{}#{}#{}#{}#{}",frontEndChannel.remoteAddress(),frontEndChannel.localAddress(),backEndChannel.localAddress(),backEndChannel.remoteAddress(),costProxy,buffer.toString());
     }
