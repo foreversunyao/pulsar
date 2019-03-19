@@ -132,7 +132,7 @@ public class DirectProxyHandler {
     }
 
     enum BackendState {
-        Init, HandshakeCompleted, Ready
+        Init, HandshakeCompleted
     }
 
     public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
@@ -142,6 +142,7 @@ public class DirectProxyHandler {
         protected ChannelHandlerContext ctx;
         private ProxyConfiguration config;
         private int protocolVersion;
+        private ParserProxyHandler parserProxy = new ParserProxyHandler();
 
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             this.config = config;
@@ -186,10 +187,9 @@ public class DirectProxyHandler {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
                 inboundChannel.writeAndFlush(msg).addListener(this);
-                new ParserProxyHandler(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
+                parserProxy.parseConn(frontEndChannel,ctx.channel(),System.currentTimeMillis()-startTime,msg);
                 break;
             default:
-                System.out.println("#receive..");
                 break;
             }
 

@@ -42,17 +42,23 @@ public class ParserProxyHandler extends PulsarDecoder {
         // no-op
     }
 
-    public ParserProxyHandler(Channel frontEndChannel,Channel backEndChannel,Long costProxy, Object msg) {
+    public ParserProxyHandler() {
+    }
+
+    public void parseConn(Channel frontEndChannel,Channel backEndChannel,Long costProxy, Object msg){
         this.frontEndChannel = frontEndChannel;
         this.backEndChannel = backEndChannel;
         this.costProxy = costProxy;
         this.parseMsg(msg);
     }
-
     private void parseMsg(Object msg) {
         ByteBuf buffer = (ByteBuf) msg;
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
+        for (int i=0;i<((ByteBuf) msg).capacity();i++){
+            System.out.print(buffer.getByte(i));
+        }
+        System.out.println();
         log.info("{}#{}#{}#{}#{}#{}",frontEndChannel.remoteAddress(),frontEndChannel.localAddress(),backEndChannel.localAddress(),backEndChannel.remoteAddress(),costProxy,buffer.toString());
     }
 
