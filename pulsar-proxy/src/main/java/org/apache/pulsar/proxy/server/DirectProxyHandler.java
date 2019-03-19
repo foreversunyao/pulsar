@@ -182,6 +182,7 @@ public class DirectProxyHandler {
             // This is invoked when the write operation on the paired connection
             // is completed
             if (future.isSuccess()) {
+                System.out.println("outbound success...");
                 outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,

@@ -176,6 +176,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         // This is invoked when the write operation on the paired connection is
         // completed
         if (future.isSuccess()) {
+            System.out.println("paired connection.....");
             ctx.read();
         } else {
             LOG.warn("[{}] Error in writing to inbound channel. Closing", remoteAddress, future.cause());
