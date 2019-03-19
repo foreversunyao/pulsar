@@ -50,7 +50,11 @@ public class ParserProxyHandler extends PulsarDecoder {
         this.frontEndChannel = frontEndChannel;
         this.backEndChannel = backEndChannel;
         this.costProxy = costProxy;
-        this.parseMsg(msg);
+        try {
+            this.parseMsg(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     private void parseMsg(Object msg) throws Exception {
         ByteBuf buffer = (ByteBuf) msg;
