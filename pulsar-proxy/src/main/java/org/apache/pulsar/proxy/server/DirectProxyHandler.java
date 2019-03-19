@@ -102,8 +102,9 @@ public class DirectProxyHandler {
                 }
                 ch.pipeline().addLast("frameDecoder",
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
-                ch.pipeline().addLast("proxyOutboundParserSendHandler", new ParserSendHandler(config, protocolVersion));
                 ch.pipeline().addLast("proxyOutboundConnectHandler", new ProxyBackendHandler(config, protocolVersion));
+                ch.pipeline().addLast("proxyOutboundParserSendHandler", new ParserSendHandler(config, protocolVersion));
+                //ch.pipeline().addLast("proxyOutboundConnectHandler", new ProxyBackendHandler(config, protocolVersion));
 
             }
         });
@@ -240,7 +241,7 @@ public class DirectProxyHandler {
             }
 
             state = BackendState.HandshakeCompleted;
-
+            System.out.println("Handshake......");
             //inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
             //    if (log.isDebugEnabled()) {
             //        log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
@@ -249,8 +250,8 @@ public class DirectProxyHandler {
                 //outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
-                inboundChannel.read();
-                outboundChannel.read();
+                //inboundChannel.read();
+                //outboundChannel.read();
             //});
         }
 
