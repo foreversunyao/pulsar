@@ -250,8 +250,8 @@ public class DirectProxyHandler {
                 //outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
-                //inboundChannel.read();
-                //outboundChannel.read();
+                inboundChannel.read();
+                outboundChannel.read();
             //});
         }
 
