@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import javax.net.ssl.SSLSession;
 
+import io.netty.handler.codec.LengthFieldPrepender;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
 import org.apache.pulsar.common.api.Commands;
@@ -92,6 +93,7 @@ public class DirectProxyHandler {
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
                 ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendHandler(config, protocolVersion));
                 ch.pipeline().addLast("proxyOutboundSendHandler", new ProxyBackendSendHandler(config, protocolVersion));
+                ch.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
             }
         });
 
@@ -172,9 +174,11 @@ public class DirectProxyHandler {
                 ProxyService.opsCounter.inc();
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                    ByteBuf buffer = (ByteBuf) msg;
+                    /**
                     PulsarApi.BaseCommand cmd = null;
                     PulsarApi.BaseCommand.Builder cmdBuilder = null;
-                    ByteBuf buffer = (ByteBuf) msg;
+
                     int cmdSize = (int) buffer.readUnsignedInt();
                     int writerIndex = buffer.writerIndex();
                     buffer.writerIndex(buffer.readerIndex() + cmdSize);
@@ -187,7 +191,7 @@ public class DirectProxyHandler {
                     System.out.println(cmd.getType());
                     cmdBuilder.recycle();
                     cmd.recycle();
-
+**/
                     for(int i=0;i<buffer.capacity();i++){
                         System.out.print((char)(buffer.getByte(i)));
                     }
@@ -317,6 +321,7 @@ public class DirectProxyHandler {
                     if (msg instanceof ByteBuf) {
                         ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                     }
+
                     inboundChannel.writeAndFlush(msg).addListener(this);
                     break;
 
