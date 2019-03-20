@@ -320,9 +320,8 @@ public class DirectProxyHandler {
                     if (msg instanceof ByteBuf) {
                         ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                     }
-                    ((ByteBuf)msg).retain();
                     System.out.println("Readying...");
-                    inboundChannel.writeAndFlush(msg).addListener(this);
+                    inboundChannel.writeAndFlush(((ByteBuf)msg).retain()).addListener(this);
                     System.out.println("Ready...");
                     break;
 
