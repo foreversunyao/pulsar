@@ -172,7 +172,7 @@ public class DirectProxyHandler {
                 case HandshakeCompleted:
                     System.out.println("6,HandshakeCompleted...........");
                     //ctx.write(msg);
-                    ctx.read();
+                    ctx.fireChannelRead(msg);
                     break;
 
                 default:
@@ -223,7 +223,7 @@ public class DirectProxyHandler {
                 System.out.println("2,handleconnected..direcgtproxy");
                 final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                         .get("proxyOutboundHandler");
-               ctx.fireChannelReadComplete();
+               ctx.read();
             });
 
 
