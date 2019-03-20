@@ -175,7 +175,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                     ByteBuf buffer = (ByteBuf) msg;
-
+/*
                     PulsarApi.BaseCommand cmd = null;
                     PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
@@ -191,6 +191,7 @@ public class DirectProxyHandler {
                     System.out.println(cmd.getType());
                     cmdBuilder.recycle();
                     cmd.recycle();
+                    */
                     for(int i=0;i<buffer.capacity();i++){
                         System.out.print((char)(buffer.getByte(i)));
                     }
@@ -245,8 +246,8 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-                //inboundChannel.pipeline().remove("frameDecoder");
-              //  outboundChannel.pipeline().remove("frameDecoder");
+                inboundChannel.pipeline().remove("frameDecoder");
+                outboundChannel.pipeline().remove("frameDecoder");
                // outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 //inboundChannel.pipeline().addLast("proxyPrependerFrontHandler",new LengthFieldPrepender(4));
                 // Start reading from both connections
