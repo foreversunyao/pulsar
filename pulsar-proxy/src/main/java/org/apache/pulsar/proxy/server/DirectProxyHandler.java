@@ -119,7 +119,7 @@ public class DirectProxyHandler {
     }
 
     enum BackendState {
-        Init, HandshakeCompleted
+        Init, HandshakeCompleted, Ready
     }
 
     public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
@@ -170,7 +170,9 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                inboundChannel.writeAndFlush(msg).addListener(this);
+                state = BackendState.Ready;
+                ctx.fireChannelRead(msg);
+                //inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
             default:
@@ -185,7 +187,7 @@ public class DirectProxyHandler {
             // is completed
             System.out.println("DirectProxyHandler operationComplete...");
             if (future.isSuccess()) {
-                outboundChannel.read();
+                //outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
@@ -298,7 +300,8 @@ public class DirectProxyHandler {
                     super.channelRead(ctx, msg);
                     break;
 
-                case HandshakeCompleted:
+                case Ready:
+                    state=BackendState.HandshakeCompleted;
                     ProxyService.opsCounter.inc();
                     if (msg instanceof ByteBuf) {
                         ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
@@ -346,19 +349,8 @@ public class DirectProxyHandler {
                 return;
             }
             System.out.println("DirectProxyHandler handleconnected..");
-            state = BackendState.HandshakeCompleted;
+            //state = BackendState.HandshakeCompleted;
 
-            inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
-                if (log.isDebugEnabled()) {
-                    log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
-                }
-                inboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().remove("frameDecoder");
-
-                // Start reading from both connections
-                inboundChannel.read();
-                outboundChannel.read();
-            });
         }
 
         @Override
