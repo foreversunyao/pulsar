@@ -4,9 +4,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+import java.nio.ByteOrder;
+
 public class MessageEncoder extends MessageToByteEncoder {
+
+
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf byteBuf)  {
+        System.out.println("encode...");
         ByteBuf buffer = (ByteBuf)msg;
         buffer.writableBytes();
 
