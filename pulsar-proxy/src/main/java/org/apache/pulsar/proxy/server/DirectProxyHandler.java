@@ -169,10 +169,12 @@ public class DirectProxyHandler {
                 ProxyService.opsCounter.inc();
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                    ByteBuf buffer = (ByteBuf) msg;
+                    for(int i=0;i<buffer.capacity();i++){
+                        System.out.print((char)(buffer.getByte(i)));
+                    }
                 }
-                //state = BackendState.Ready;
                 ctx.fireChannelRead(msg);
-                //inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
             default:
@@ -274,16 +276,6 @@ public class DirectProxyHandler {
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             System.out.println("new DirectProxyHandler... channelActive... and try to connect broker");
             this.ctx = ctx;
-            // Send the Connect command to broker
-            String authData = "";
-            if (authentication.getAuthData().hasDataFromCommand()) {
-                authData = authentication.getAuthData().getCommandData();
-            }
-            ByteBuf command = null;
-            command = Commands.newConnect(authentication.getAuthMethodName(), authData, protocolVersion, "Pulsar proxy",
-                    null /* target broker */, originalPrincipal, clientAuthData, clientAuthMethod);
-            outboundChannel.writeAndFlush(command);
-            outboundChannel.read();
         }
 
         @Override
