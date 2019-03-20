@@ -169,13 +169,6 @@ public class DirectProxyHandler {
                 case HandshakeCompleted:
                     System.out.println("6,HandshakeCompleted...........");
                     ctx.write(msg);
-                case Ready:
-                    ProxyService.opsCounter.inc();
-                    if (msg instanceof ByteBuf) {
-                        ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
-                    }
-
-                    inboundChannel.writeAndFlush(msg).addListener(this);
                     break;
 
                 default:
@@ -218,23 +211,21 @@ public class DirectProxyHandler {
                 return;
             }
 
-            state = BackendState.HandshakeCompleted;
-            System.out.println("ProxyBackendConnectionHandler handlerConnected:");
+            state = BackendState.HandshakeComplete
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-                //inboundChannel.pipeline().remove("frameDecoder");
-                //outboundChannel.pipeline().remove("frameDecoder");
-
-                // Start reading from both connections
-                //inboundChannel.read();
-                //outboundChannel.read();
+                System.out.println("2,handleconnected..direcgtproxy");
                 final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                         .get("proxyOutboundHandler");
-                cnx.setRemoteHostName(this.remoteHostName);
-
+                ctx.read();
             });
+
+
+
+
+
         }
         @Override
         public void channelInactive(ChannelHandlerContext ctx) {
@@ -327,20 +318,15 @@ public class DirectProxyHandler {
 
 
             state = BackendState.Ready;
+            System.out.println();
 
-            inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
-                if (log.isDebugEnabled()) {
-                    log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
-                }
-                System.out.println("2,handleconnected..direcgtproxy");
-                inboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().remove("frameDecoder");
+            inboundChannel.pipeline().remove("frameDecoder");
+            outboundChannel.pipeline().remove("frameDecoder");
 
                 // Start reading from both connections
-                inboundChannel.read();
-                System.out.println("3,starting reading");
-                outboundChannel.read();
-            });
+            inboundChannel.read();
+            System.out.println("3,starting reading");
+            outboundChannel.read();
         }
 
         @Override
