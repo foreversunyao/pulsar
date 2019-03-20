@@ -88,7 +88,9 @@ public class DirectProxyHandler {
                 }
                 ch.pipeline().addLast("frameDecoder",
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
+                //inbound
                 ch.pipeline().addLast("proxyBackendConnectionHandler", new ProxyBackendConnectionHandler(config, protocolVersion));
+                //inbound
                 ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendHandler(config, protocolVersion));
             }
         });
@@ -140,6 +142,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            System.out.println("DirectProxyhandler channelActive..");
             this.ctx = ctx;
             // Send the Connect command to broker
             String authData = "";
@@ -270,6 +273,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            System.out.println("ProxyBackendHandler channelActive");
             this.ctx = ctx;
         }
 
@@ -317,7 +321,7 @@ public class DirectProxyHandler {
         @Override
         protected void handleConnected(CommandConnected connected) {
 
-
+            System.out.println("ProxyBackendHandler...handleConnected");
             state = BackendState.Ready;
             System.out.println();
 
