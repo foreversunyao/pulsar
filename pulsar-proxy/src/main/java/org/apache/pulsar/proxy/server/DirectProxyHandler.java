@@ -168,7 +168,8 @@ public class DirectProxyHandler {
                     break;
                 case HandshakeCompleted:
                     System.out.println("6,HandshakeCompleted...........");
-                    ctx.write(msg);
+                    //ctx.write(msg);
+                    ctx.read();
                     break;
 
                 default:
@@ -211,7 +212,7 @@ public class DirectProxyHandler {
                 return;
             }
 
-            state = BackendState.HandshakeComplete
+            state = BackendState.HandshakeCompleted;
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
