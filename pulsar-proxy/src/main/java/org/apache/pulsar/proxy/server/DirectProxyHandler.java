@@ -136,6 +136,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            System.out.println("DirectProxyHandler... channelActive... and try to connect broker");
             this.ctx = ctx;
             // Send the Connect command to broker
             String authData = "";
@@ -151,6 +152,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("DirectProxyHandler channelRead...state:"+state);
             switch (state) {
             case Init:
                 if (log.isDebugEnabled()) {
@@ -180,6 +182,7 @@ public class DirectProxyHandler {
         public void operationComplete(Future<Void> future) throws Exception {
             // This is invoked when the write operation on the paired connection
             // is completed
+            System.out.println("DirectProxyHandler operationComplete...");
             if (future.isSuccess()) {
                 outboundChannel.read();
             } else {
@@ -208,7 +211,7 @@ public class DirectProxyHandler {
                 ctx.close();
                 return;
             }
-
+            System.out.println("DirectProxyHandler handleconnected..");
             state = BackendState.HandshakeCompleted;
 
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
