@@ -148,6 +148,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("ProxyConnection... channelRead,state:"+state);
         switch (state) {
         case Init:
         case ProxyLookupRequests:
