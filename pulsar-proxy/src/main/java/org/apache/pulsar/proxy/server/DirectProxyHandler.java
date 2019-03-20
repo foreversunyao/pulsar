@@ -194,7 +194,7 @@ public class DirectProxyHandler {
                     for(int i=0;i<buffer.capacity();i++){
                         System.out.print((char)(buffer.getByte(i)));
                     }
-                    buffer.release();
+                    //buffer.release();
                 }
                 ctx.fireChannelRead(msg);
                 break;
@@ -321,6 +321,7 @@ public class DirectProxyHandler {
                         ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                     }
                     System.out.println("Readying...");
+
                     inboundChannel.writeAndFlush(((ByteBuf)msg).retain()).addListener(this);
                     System.out.println("Ready...");
                     break;
