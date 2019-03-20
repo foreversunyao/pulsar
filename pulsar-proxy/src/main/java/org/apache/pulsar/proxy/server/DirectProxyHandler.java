@@ -245,7 +245,7 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-               // inboundChannel.pipeline().remove("frameDecoder");
+                inboundChannel.pipeline().remove("frameDecoder");
               //  outboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 // Start reading from both connections
@@ -338,6 +338,7 @@ public class DirectProxyHandler {
             // is completed
             System.out.println("new DirectProxyHandler operationComplete...");
             if (future.isSuccess()) {
+                System.out.println("will do outboundChannel.read()....");
                 outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
