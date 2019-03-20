@@ -28,7 +28,9 @@ import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.PulsarDecoder;
+import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandConnected;
+import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +132,7 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
 
+
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             this.config = config;
             this.protocolVersion = protocolVersion;
@@ -169,10 +172,26 @@ public class DirectProxyHandler {
                 ProxyService.opsCounter.inc();
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                    PulsarApi.BaseCommand cmd = null;
+                    PulsarApi.BaseCommand.Builder cmdBuilder = null;
                     ByteBuf buffer = (ByteBuf) msg;
+                    int cmdSize = (int) buffer.readUnsignedInt();
+                    int writerIndex = buffer.writerIndex();
+                    buffer.writerIndex(buffer.readerIndex() + cmdSize);
+                    ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+                    cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+                    cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+                    buffer.writerIndex(writerIndex);
+
+                    cmdInputStream.recycle();
+                    System.out.println(cmd.getType());
+                    cmdBuilder.recycle();
+                    cmd.recycle();
+
                     for(int i=0;i<buffer.capacity();i++){
                         System.out.print((char)(buffer.getByte(i)));
                     }
+                    buffer.release();
                 }
                 ctx.fireChannelRead(msg);
                 break;
