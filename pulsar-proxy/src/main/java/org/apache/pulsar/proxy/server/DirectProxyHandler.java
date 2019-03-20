@@ -220,7 +220,21 @@ public class DirectProxyHandler {
 
             state = BackendState.HandshakeCompleted;
             System.out.println("ProxyBackendConnectionHandler handlerConnected:");
+            inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
+                if (log.isDebugEnabled()) {
+                    log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
+                }
+                //inboundChannel.pipeline().remove("frameDecoder");
+                //outboundChannel.pipeline().remove("frameDecoder");
 
+                // Start reading from both connections
+                //inboundChannel.read();
+                //outboundChannel.read();
+                final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
+                        .get("proxyOutboundHandler");
+                cnx.setRemoteHostName(this.remoteHostName);
+
+            });
         }
         @Override
         public void channelInactive(ChannelHandlerContext ctx) {
