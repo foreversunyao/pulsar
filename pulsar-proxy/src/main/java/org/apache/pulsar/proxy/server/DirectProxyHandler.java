@@ -223,7 +223,7 @@ public class DirectProxyHandler {
                 System.out.println("2,handleconnected..direcgtproxy");
                 final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                         .get("proxyOutboundHandler");
-                ctx.read();
+               ctx.fireChannelReadComplete();
             });
 
 
