@@ -175,7 +175,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                     ByteBuf buffer = (ByteBuf) msg;
-                    /**
+
                     PulsarApi.BaseCommand cmd = null;
                     PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
@@ -191,7 +191,6 @@ public class DirectProxyHandler {
                     System.out.println(cmd.getType());
                     cmdBuilder.recycle();
                     cmd.recycle();
-**/
                     for(int i=0;i<buffer.capacity();i++){
                         System.out.print((char)(buffer.getByte(i)));
                     }
