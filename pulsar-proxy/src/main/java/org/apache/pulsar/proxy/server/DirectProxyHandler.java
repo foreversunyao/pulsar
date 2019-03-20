@@ -255,7 +255,7 @@ public class DirectProxyHandler {
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
-                outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","proxyPrependerFrontHandler",new LengthFieldPrepender(4));});
+                outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","proxyPrependerFrontHandler",new MessageEncoder());});
         }
 
         @Override
