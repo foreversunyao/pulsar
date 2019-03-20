@@ -89,6 +89,7 @@ public class DirectProxyHandler {
                 ch.pipeline().addLast("frameDecoder",
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
                 ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendHandler(config, protocolVersion));
+                ch.pipeline().addLast("proxyOutboundSendHandler", new ProxyBackendSendHandler(config, protocolVersion));
             }
         });
 
@@ -254,5 +255,137 @@ public class DirectProxyHandler {
         }
     }
 
+    public class ProxyBackendSendHandler extends PulsarDecoder implements FutureListener<Void> {
+
+        private BackendState state = BackendState.Init;
+        private String remoteHostName;
+        protected ChannelHandlerContext ctx;
+        private ProxyConfiguration config;
+        private int protocolVersion;
+
+        public ProxyBackendSendHandler(ProxyConfiguration config, int protocolVersion) {
+            this.config = config;
+            this.protocolVersion = protocolVersion;
+        }
+
+        @Override
+        public void channelActive(ChannelHandlerContext ctx) throws Exception {
+            System.out.println("DirectProxyHandler... channelActive... and try to connect broker");
+            this.ctx = ctx;
+            // Send the Connect command to broker
+            String authData = "";
+            if (authentication.getAuthData().hasDataFromCommand()) {
+                authData = authentication.getAuthData().getCommandData();
+            }
+            ByteBuf command = null;
+            command = Commands.newConnect(authentication.getAuthMethodName(), authData, protocolVersion, "Pulsar proxy",
+                    null /* target broker */, originalPrincipal, clientAuthData, clientAuthMethod);
+            outboundChannel.writeAndFlush(command);
+            outboundChannel.read();
+        }
+
+        @Override
+        public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("DirectProxyHandler channelRead...state:"+state);
+            switch (state) {
+                case Init:
+                    if (log.isDebugEnabled()) {
+                        log.debug("[{}] [{}] Received msg on broker connection: {}", inboundChannel, outboundChannel,
+                                msg.getClass());
+                    }
+
+                    // Do the regular decoding for the Connected message
+                    super.channelRead(ctx, msg);
+                    break;
+
+                case HandshakeCompleted:
+                    ProxyService.opsCounter.inc();
+                    if (msg instanceof ByteBuf) {
+                        ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
+                    }
+                    inboundChannel.writeAndFlush(msg).addListener(this);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
+        @Override
+        public void operationComplete(Future<Void> future) throws Exception {
+            // This is invoked when the write operation on the paired connection
+            // is completed
+            System.out.println("DirectProxyHandler operationComplete...");
+            if (future.isSuccess()) {
+                outboundChannel.read();
+            } else {
+                log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
+                        outboundChannel, future.cause());
+                inboundChannel.close();
+            }
+        }
+
+        @Override
+        protected void messageReceived() {
+            // no-op
+        }
+
+        @Override
+        protected void handleConnected(CommandConnected connected) {
+            if (log.isDebugEnabled()) {
+                log.debug("[{}] [{}] Received Connected from broker", inboundChannel, outboundChannel);
+            }
+
+            if (config.isTlsHostnameVerificationEnabled() && remoteHostName != null
+                    && !verifyTlsHostName(remoteHostName, ctx)) {
+                // close the connection if host-verification failed with the
+                // broker
+                log.warn("[{}] Failed to verify hostname of {}", ctx.channel(), remoteHostName);
+                ctx.close();
+                return;
+            }
+            System.out.println("DirectProxyHandler handleconnected..");
+            state = BackendState.HandshakeCompleted;
+
+            inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
+                if (log.isDebugEnabled()) {
+                    log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
+                }
+                inboundChannel.pipeline().remove("frameDecoder");
+                outboundChannel.pipeline().remove("frameDecoder");
+
+                // Start reading from both connections
+                inboundChannel.read();
+                outboundChannel.read();
+            });
+        }
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) {
+            inboundChannel.close();
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+            log.warn("[{}] [{}] Caught exception: {}", inboundChannel, outboundChannel, cause.getMessage(), cause);
+            ctx.close();
+        }
+
+        public void setRemoteHostName(String remoteHostName) {
+            this.remoteHostName = remoteHostName;
+        }
+
+        private boolean verifyTlsHostName(String hostname, ChannelHandlerContext ctx) {
+            ChannelHandler sslHandler = ctx.channel().pipeline().get("tls");
+
+            SSLSession sslSession = null;
+            if (sslHandler != null) {
+                sslSession = ((SslHandler) sslHandler).engine().getSession();
+                return (new DefaultHostnameVerifier()).verify(hostname, sslSession);
+            }
+            return false;
+        }
+    }
     private static final Logger log = LoggerFactory.getLogger(DirectProxyHandler.class);
 }
