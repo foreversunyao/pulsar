@@ -325,6 +325,7 @@ public class DirectProxyHandler {
 
                     inboundChannel.writeAndFlush(((ByteBuf)msg).retain()).addListener(this);
                     System.out.println("Ready...");
+                    ctx.writeAndFlush(msg);
                     break;
 
                 default:
@@ -340,7 +341,7 @@ public class DirectProxyHandler {
             System.out.println("new DirectProxyHandler operationComplete...");
             if (future.isSuccess()) {
                 System.out.println("will do outboundChannel.read()....");
-                //outboundChannel.read();
+                outboundChannel.read();
             } else {
                 log.warn("[{}] [{}] Failed to write on proxy connection. Closing both connections.", inboundChannel,
                         outboundChannel, future.cause());
