@@ -221,9 +221,8 @@ public class DirectProxyHandler {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
                 System.out.println("2,handleconnected..direcgtproxy");
-                final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
-                        .get("proxyOutboundHandler");
-               ctx.read();
+                inboundChannel.read();
+                outboundChannel.read();
             });
 
 
