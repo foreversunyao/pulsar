@@ -322,7 +322,7 @@ public class DirectProxyHandler {
                     }
                     System.out.println("Readying...");
 
-                    inboundChannel.writeAndFlush(((ByteBuf)msg).retain()).addListener(this);
+                    inboundChannel.writeAndFlush(msg).addListener(this);
                     System.out.println("Ready...");
                     break;
 
