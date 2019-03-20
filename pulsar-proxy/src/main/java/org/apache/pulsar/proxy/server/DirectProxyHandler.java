@@ -93,7 +93,7 @@ public class DirectProxyHandler {
                         new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
                 ch.pipeline().addLast("proxyOutboundHandler", new ProxyBackendHandler(config, protocolVersion));
                 ch.pipeline().addLast("proxyOutboundSendHandler", new ProxyBackendSendHandler(config, protocolVersion));
-                ch.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
+                //ch.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
             }
         });
 
@@ -248,7 +248,7 @@ public class DirectProxyHandler {
                 }
                // inboundChannel.pipeline().remove("frameDecoder");
               //  outboundChannel.pipeline().remove("frameDecoder");
-
+                outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
