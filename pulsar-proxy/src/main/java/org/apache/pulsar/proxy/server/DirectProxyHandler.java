@@ -170,7 +170,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                state = BackendState.Ready;
+                //state = BackendState.Ready;
                 ctx.fireChannelRead(msg);
                 //inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
@@ -259,7 +259,7 @@ public class DirectProxyHandler {
 
     public class ProxyBackendSendHandler extends PulsarDecoder implements FutureListener<Void> {
 
-        private BackendState state = BackendState.Init;
+        private BackendState state = BackendState.Ready;
         private String remoteHostName;
         protected ChannelHandlerContext ctx;
         private ProxyConfiguration config;
@@ -272,7 +272,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-            System.out.println("DirectProxyHandler... channelActive... and try to connect broker");
+            System.out.println("new DirectProxyHandler... channelActive... and try to connect broker");
             this.ctx = ctx;
             // Send the Connect command to broker
             String authData = "";
@@ -288,7 +288,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
-            System.out.println("DirectProxyHandler channelRead...state:"+state);
+            System.out.println("new DirectProxyHandler channelRead...state:"+state);
             switch (state) {
                 case Init:
                     if (log.isDebugEnabled()) {
@@ -301,7 +301,7 @@ public class DirectProxyHandler {
                     break;
 
                 case Ready:
-                    state=BackendState.HandshakeCompleted;
+                    //state=BackendState.HandshakeCompleted;
                     ProxyService.opsCounter.inc();
                     if (msg instanceof ByteBuf) {
                         ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
@@ -319,7 +319,7 @@ public class DirectProxyHandler {
         public void operationComplete(Future<Void> future) throws Exception {
             // This is invoked when the write operation on the paired connection
             // is completed
-            System.out.println("DirectProxyHandler operationComplete...");
+            System.out.println("new DirectProxyHandler operationComplete...");
             if (future.isSuccess()) {
                 outboundChannel.read();
             } else {
@@ -348,7 +348,7 @@ public class DirectProxyHandler {
                 ctx.close();
                 return;
             }
-            System.out.println("DirectProxyHandler handleconnected..");
+            System.out.println("new DirectProxyHandler handleconnected..");
             //state = BackendState.HandshakeCompleted;
 
         }
