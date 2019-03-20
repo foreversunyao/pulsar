@@ -247,7 +247,7 @@ public class DirectProxyHandler {
                 }
                 //inboundChannel.pipeline().remove("frameDecoder");
               //  outboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
+               // outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 //inboundChannel.pipeline().addLast("proxyPrependerFrontHandler",new LengthFieldPrepender(4));
                 // Start reading from both connections
                 inboundChannel.read();
@@ -323,9 +323,9 @@ public class DirectProxyHandler {
                     }
                     System.out.println("Readying...");
 
-                    inboundChannel.writeAndFlush(((ByteBuf)msg).retain()).addListener(this);
+                    inboundChannel.writeAndFlush(msg).addListener(this);
                     System.out.println("Ready...");
-                    ctx.writeAndFlush(msg);
+                    //ctx.writeAndFlush(msg);
                     break;
 
                 default:
