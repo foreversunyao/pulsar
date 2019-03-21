@@ -120,7 +120,7 @@ public class DirectProxyHandler {
     }
 
     enum BackendState {
-        Init, HandshakeCompleted
+        Init, HandshakeCompleted, Ready
     }
 
     public class ProxyBackendHandler extends PulsarDecoder implements FutureListener<Void> {
@@ -172,10 +172,14 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                inboundChannel.writeAndFlush(msg).addListener(this);
+                outboundChannel.pipeline().fireChannelRead(msg);
+                //inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
+                case Ready:
+                    inboundChannel.writeAndFlush(msg).addListener(this);
+                    break;
 
-            default:
+                default:
                 break;
             }
 
@@ -223,8 +227,7 @@ public class DirectProxyHandler {
                 }
                 //inboundChannel.pipeline().remove("frameDecoder");
                 //outboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().addLast("ByteBufPairEncoder", ByteBufPair.ENCODER);
-                //outboundChannel.pipeline().addLast("frameEncode",new LengthFieldPrepender(4,true));
+                outboundChannel.pipeline().addLast("frameEncode",new LengthFieldPrepender(4,true));
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
