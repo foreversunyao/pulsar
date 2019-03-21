@@ -248,8 +248,8 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-               // inboundChannel.pipeline().remove("frameDecoder");
-               // outboundChannel.pipeline().remove("frameDecoder");
+                inboundChannel.pipeline().remove("frameDecoder");
+                outboundChannel.pipeline().remove("frameDecoder");
                // outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 //inboundChannel.pipeline().addLast("proxyPrependerFrontHandler",new LengthFieldPrepender(4));
 
@@ -258,7 +258,7 @@ public class DirectProxyHandler {
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
-                outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","ByteBufPairEncoder",ByteBufPair.ENCODER);
+                //outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","ByteBufPairEncoder",ByteBufPair.ENCODER);
 
             });
         }
