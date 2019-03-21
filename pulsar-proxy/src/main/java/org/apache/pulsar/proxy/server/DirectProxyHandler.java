@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 
 import javax.net.ssl.SSLSession;
 
+import io.netty.handler.codec.LengthFieldPrepender;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
 import org.apache.pulsar.common.api.Commands;
@@ -219,9 +220,9 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-                inboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().remove("frameDecoder");
-
+                //inboundChannel.pipeline().remove("frameDecoder");
+                //outboundChannel.pipeline().remove("frameDecoder");
+                outboundChannel.pipeline().addLast("frameEncode",new LengthFieldPrepender(4,true));
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
