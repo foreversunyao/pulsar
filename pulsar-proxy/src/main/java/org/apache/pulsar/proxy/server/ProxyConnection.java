@@ -150,14 +150,17 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         switch (state) {
         case Init:
+            System.out.println("...proxy channelread init");
         case ProxyLookupRequests:
             // Do the regular decoding for the Connected message
+            System.out.println("...proxy channelread ProxyLookupRequests");
             super.channelRead(ctx, msg);
             break;
 
         case ProxyConnectionToBroker:
             // Pass the buffer to the outbound connection and schedule next read
             // only if we can write on the connection
+            System.out.println("...proxy channelread ProxyConnectionToBroker ");
             ProxyService.opsCounter.inc();
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
@@ -174,6 +177,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void operationComplete(Future<Void> future) throws Exception {
         // This is invoked when the write operation on the paired connection is
         // completed
+        System.out.println("proxy operationComplete");
         if (future.isSuccess()) {
             ctx.read();
         } else {
@@ -187,6 +191,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
      */
     @Override
     protected void handleConnect(CommandConnect connect) {
+        System.out.println("...handlerConnect,state:"+state);
         checkArgument(state == State.Init);
         remoteEndpointProtocolVersion = connect.getProtocolVersion();
         if (LOG.isDebugEnabled()) {

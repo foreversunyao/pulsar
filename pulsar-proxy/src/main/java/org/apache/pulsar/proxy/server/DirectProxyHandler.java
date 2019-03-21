@@ -72,7 +72,7 @@ public class DirectProxyHandler {
         this.protocolVersion = protocolVersion;
         this.sslCtx = sslCtx;
         ProxyConfiguration config = service.getConfiguration();
-
+        System.out.println("...outboundchannel init.. ");
         // Start the connection attempt.
         Bootstrap b = new Bootstrap();
         // Tie the backend connection on the same thread to avoid context
@@ -130,6 +130,7 @@ public class DirectProxyHandler {
         private int protocolVersion;
 
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
+            System.out.println("...BackendHandler init.. ");
             this.config = config;
             this.protocolVersion = protocolVersion;
         }
@@ -137,6 +138,7 @@ public class DirectProxyHandler {
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             this.ctx = ctx;
+            System.out.println("...BackendHandler channelAtive.. ");
             // Send the Connect command to broker
             String authData = "";
             if (authentication.getAuthData().hasDataFromCommand()) {
@@ -151,6 +153,7 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+            System.out.println("...BackendHandler channelRead..state: "+state);
             switch (state) {
             case Init:
                 if (log.isDebugEnabled()) {
@@ -180,6 +183,7 @@ public class DirectProxyHandler {
         public void operationComplete(Future<Void> future) throws Exception {
             // This is invoked when the write operation on the paired connection
             // is completed
+            System.out.println("...BackendHandler operationComplete.. ");
             if (future.isSuccess()) {
                 outboundChannel.read();
             } else {
@@ -199,7 +203,7 @@ public class DirectProxyHandler {
             if (log.isDebugEnabled()) {
                 log.debug("[{}] [{}] Received Connected from broker", inboundChannel, outboundChannel);
             }
-
+            System.out.println("...BackendHandler handleconnected.. state:"+state);
             if (config.isTlsHostnameVerificationEnabled() && remoteHostName != null
                     && !verifyTlsHostName(remoteHostName, ctx)) {
                 // close the connection if host-verification failed with the
