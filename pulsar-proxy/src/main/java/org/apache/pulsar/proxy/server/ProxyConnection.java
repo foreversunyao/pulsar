@@ -225,6 +225,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // connection
             // there and just pass bytes in both directions
             state = State.ProxyConnectionToBroker;
+            System.out.println("...proxy handler connect, state set to ProxyConnectionToBroker ");
             directProxyHandler = new DirectProxyHandler(service, this, connect.getProxyToBrokerUrl(),
                     protocolVersionToAdvertise, sslCtx);
             cancelKeepAliveTask();
@@ -233,6 +234,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // and we'll take care of just topics and
             // partitions metadata lookups
             state = State.ProxyLookupRequests;
+            System.out.println("...proxy handler connect, state set to ProxyLookupRequests ");
             lookupProxyHandler = new LookupProxyHandler(service, this);
             ctx.writeAndFlush(Commands.newConnected(protocolVersionToAdvertise));
         }

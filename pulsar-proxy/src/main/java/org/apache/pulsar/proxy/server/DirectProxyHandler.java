@@ -214,7 +214,7 @@ public class DirectProxyHandler {
             }
 
             state = BackendState.HandshakeCompleted;
-
+            System.out.println("...BackendHandler handleconnected.. state:"+state);
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
