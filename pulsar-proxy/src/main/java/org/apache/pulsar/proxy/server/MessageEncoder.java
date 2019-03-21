@@ -12,8 +12,8 @@ public class MessageEncoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object msg, ByteBuf byteBuf)  {
         System.out.println("encode...");
-        ByteBuf buffer = (ByteBuf)msg;
-        buffer.writableBytes();
+        byteBuf.writeBytes((ByteBuf)(msg));
+
 
     }
 }
