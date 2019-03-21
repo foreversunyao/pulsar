@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLSession;
 
+import io.netty.buffer.Unpooled;
 import org.apache.pulsar.broker.authentication.AuthenticationDataCommand;
 import org.apache.pulsar.broker.authentication.AuthenticationDataSource;
 import org.apache.pulsar.client.api.Authentication;
@@ -166,7 +167,12 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
             }
-            System.out.println(((ByteBuf)msg).toString());
+            ByteBuf buffer = (ByteBuf)msg;
+            ByteBuf newmsg = Unpooled.wrappedBuffer(buffer);
+            for (int i = 0; i < newmsg.capacity(); i++) {
+                byte b = newmsg.getByte(i);
+                System.out.print((char) b);
+            }
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
