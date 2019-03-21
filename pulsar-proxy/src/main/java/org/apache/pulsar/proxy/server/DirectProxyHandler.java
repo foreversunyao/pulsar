@@ -27,6 +27,7 @@ import javax.net.ssl.SSLSession;
 import io.netty.handler.codec.LengthFieldPrepender;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.pulsar.client.api.Authentication;
+import org.apache.pulsar.common.api.ByteBufPair;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.PulsarDecoder;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandConnected;
@@ -222,7 +223,8 @@ public class DirectProxyHandler {
                 }
                 //inboundChannel.pipeline().remove("frameDecoder");
                 //outboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().addLast("frameEncode",new LengthFieldPrepender(4,true));
+                outboundChannel.pipeline().addLast("ByteBufPairEncoder", ByteBufPair.ENCODER);
+                //outboundChannel.pipeline().addLast("frameEncode",new LengthFieldPrepender(4,true));
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
