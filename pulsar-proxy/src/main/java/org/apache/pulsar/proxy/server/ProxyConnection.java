@@ -173,6 +173,11 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                 byte b = newmsg.getByte(i);
                 System.out.print((char) b);
             }
+
+            for (int i = 0; i < buffer.capacity(); i++) {
+                byte b = buffer.getByte(i);
+                System.out.print((char) b);
+            }
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
