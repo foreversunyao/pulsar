@@ -253,11 +253,12 @@ public class DirectProxyHandler {
                // outboundChannel.pipeline().addLast("proxyPrependerHandler",new LengthFieldPrepender(4));
                 //inboundChannel.pipeline().addLast("proxyPrependerFrontHandler",new LengthFieldPrepender(4));
 
-                outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","ByteBufPairEncoder",ByteBufPair.ENCODER);
+
 
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
+                outboundChannel.pipeline().addBefore("proxyOutboundSendHandler","ByteBufPairEncoder",ByteBufPair.ENCODER);
 
             });
         }
