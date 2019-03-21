@@ -172,10 +172,13 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                state = BackendState.Ready;
                 outboundChannel.pipeline().fireChannelRead(msg);
                 //inboundChannel.writeAndFlush(msg).addListener(this);
+
                 break;
                 case Ready:
+                    state = BackendState.HandshakeCompleted;
                     inboundChannel.writeAndFlush(msg).addListener(this);
                     break;
 
