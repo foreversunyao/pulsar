@@ -45,6 +45,7 @@ import org.apache.pulsar.common.api.proto.PulsarApi.CommandGetTopicsOfNamespace;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandLookupTopic;
 import org.apache.pulsar.common.api.proto.PulsarApi.CommandPartitionedTopicMetadata;
 import org.apache.pulsar.common.api.proto.PulsarApi.ServerError;
+import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,8 +176,18 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
 
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
             buffer.markReaderIndex();
-            System.out.println(".....length:"+ buffer.readUnsignedInt());
+            buffer.markWriterIndex();
+            PulsarApi.BaseCommand cmd = null;
+            PulsarApi.BaseCommand.Builder cmdBuilder = null;
+            int cmdSize = (int) buffer.readUnsignedInt();
+            int writerIndex = buffer.writerIndex();
+            buffer.writerIndex(buffer.readerIndex() + cmdSize);
+            ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+            cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+            System.out.println(".....type:"+ cmd.getType());
             buffer.resetReaderIndex();
+            buffer.resetWriterIndex();
             String output="";
 /*
             for (int i = 0; i < 4; i++) {
