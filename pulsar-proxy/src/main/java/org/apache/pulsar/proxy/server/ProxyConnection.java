@@ -192,6 +192,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             System.out.println(".....type:"+ cmd.getType());
+            System.out.println(".....producer:"+ cmd.getProducer());
+            System.out.println(".....message:"+ cmd.getMessage());
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
             } catch (Exception e){
