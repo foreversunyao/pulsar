@@ -176,63 +176,10 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             //int writerIndex = buffer.writerIndex();
 
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
-            PulsarApi.BaseCommand cmd = null;
-            PulsarApi.BaseCommand.Builder cmdBuilder = null;
-            String output="";
-            try {
-                //
-                buffer.markReaderIndex();
-                buffer.markWriterIndex();
 
-                //skip lengthFieldLength
-                buffer.readerIndex(lengthFieldLength);
+            new ParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
 
-                int cmdSize = (int) buffer.readUnsignedInt();
-                buffer.writerIndex(buffer.readerIndex() + cmdSize);
-                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-                System.out.println("type:"+cmd.getType());
-                switch (cmd.getType()) {
-                    case PRODUCER:
-                        System.out.println(".....producer name and topic:" + cmd.getProducer().getProducerName() + cmd.getProducer().getTopic());
-                        break;
-                    case SEND:
-                        System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages());
-                        break;
-                    case SUBSCRIBE:
-                        System.out.println(".....consumer name"+cmd.getSubscribe().getConsumerName()+cmd.getSubscribe().getTopic());
-                        break;
-                    case FLOW:
-                        System.out.println("...flow"+cmd.getFlow().toByteString());
-                        break;
-
-            }
-            buffer.resetReaderIndex();
-            buffer.resetWriterIndex();
-            } catch (Exception e){
-                System.out.println(e.getMessage());
-            }finally {
-                if (cmdBuilder != null) {
-                    cmdBuilder.recycle();
-                }
-
-                if (cmd != null) {
-                    cmd.recycle();
-                }
-                buffer.resetReaderIndex();
-                buffer.resetWriterIndex();
-            }
-
-
-
-/*
-            for (int i = 0; i < 4; i++) {
-                byte b = buffer.getByte(i);
-                output = output+(char)b;
-            }
-*/
-            LOG.info("{}#{}#{}#{}#{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),directProxyHandler.outboundChannel.localAddress(),directProxyHandler.outboundChannel.remoteAddress(),output);
+            //LOG.info("{}#{}#{}#{}#{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),directProxyHandler.outboundChannel.localAddress(),directProxyHandler.outboundChannel.remoteAddress(),output);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
             break;
 
