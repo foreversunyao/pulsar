@@ -180,7 +180,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             try {
             buffer.markReaderIndex();
             buffer.markWriterIndex();
-
+            buffer.readUnsignedInt();
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
