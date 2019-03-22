@@ -178,7 +178,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
             PulsarApi.BaseCommand cmd = null;
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
-            String output="";s
+            String output=""
             try {
             //
             buffer.markReaderIndex();
