@@ -192,6 +192,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                 ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
                 cmdBuilder = PulsarApi.BaseCommand.newBuilder();
                 cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+                System.out.println("type:"+cmd.getType());
                 switch (cmd.getType()) {
                     case PRODUCER:
                         System.out.println(".....producer name and topic:" + cmd.getProducer().getProducerName() + cmd.getProducer().getTopic());
