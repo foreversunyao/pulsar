@@ -69,6 +69,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     AuthenticationDataSource authenticationData;
     private State state;
     private final SslContext sslCtx;
+    private final int lengthFieldLength = 4;
 
     private LookupProxyHandler lookupProxyHandler = null;
     private DirectProxyHandler directProxyHandler = null;
@@ -178,17 +179,21 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             PulsarApi.BaseCommand cmd = null;
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
             try {
+            //
             buffer.markReaderIndex();
-            buffer.markWriterIndex();
-            buffer.readerIndex(4);
-            //buffer.readUnsignedInt();
+            //buffer.markWriterIndex();
+
+            //skip lengthFieldLength
+            buffer.readerIndex(lengthFieldLength);
+
             int cmdSize = (int) buffer.readUnsignedInt();
-            int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             System.out.println(".....type:"+ cmd.getType());
+            System.out.println(".....producer:"+ cmd.getProducer());
+            System.out.println(".....message:"+ cmd.getMessage());
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
             } catch (Exception e){
@@ -202,7 +207,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                     cmd.recycle();
                 }
                 buffer.resetReaderIndex();
-                buffer.resetWriterIndex();
+              //  buffer.resetWriterIndex();
             }
 
 
