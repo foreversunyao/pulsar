@@ -167,14 +167,15 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
             }
-            System.out.println("bytesCounter done");
+
             ByteBuf buffer = (ByteBuf)msg;
             try {
-                //int cmdSize = (int) buffer.readUnsignedInt();
-                System.out.println(".....length:" );
+                int cmdSize = (int) buffer.readUnsignedInt();
+                System.out.println(".....length:" +cmdSize);
+                buffer.release();
             }catch (Exception e){
                 System.out.println(e.getMessage());
-            }
+                buffer.release();}
 
             //int writerIndex = buffer.writerIndex();
 
