@@ -180,26 +180,26 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
             String output="";
             try {
-            //
-            buffer.markReaderIndex();
-            buffer.markWriterIndex();
+                //
+                buffer.markReaderIndex();
+                buffer.markWriterIndex();
 
-            //skip lengthFieldLength
-            buffer.readerIndex(lengthFieldLength);
+                //skip lengthFieldLength
+                buffer.readerIndex(lengthFieldLength);
 
-            int cmdSize = (int) buffer.readUnsignedInt();
-            buffer.writerIndex(buffer.readerIndex() + cmdSize);
-            ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-            cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-            System.out.println(".....type:"+ cmd.getType());
-            System.out.println(".....producer:"+ cmd.getProducer().getProducerName()+cmd.getProducer().getTopic());
-            System.out.println(".....send:"+ cmd.getSend());
-            System.out.println(".....topic:"+ cmd.getLookupTopicResponse().getBrokerServiceUrl());
-                for (int i = 0; i < 4; i++) {
-                    byte b = buffer.getByte(i);
-                    output = output+(char)b;
-                }
+                int cmdSize = (int) buffer.readUnsignedInt();
+                buffer.writerIndex(buffer.readerIndex() + cmdSize);
+                ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
+                cmdBuilder = PulsarApi.BaseCommand.newBuilder();
+                cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+                switch (cmd.getType()) {
+                    case PRODUCER:
+                        System.out.println(".....producer name and topic:" + cmd.getProducer().getProducerName() + cmd.getProducer().getTopic());
+                        break;
+                    case SEND:
+                        System.out.println(".....send:" + cmd.getSend());
+                        break;
+            }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
             } catch (Exception e){
