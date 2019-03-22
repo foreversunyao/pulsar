@@ -19,7 +19,7 @@
 
 package org.apache.pulsar.proxy.server;
 
-i
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.pulsar.common.api.proto.PulsarApi;
@@ -34,7 +34,7 @@ public class ParserProxyHandler {
     private Channel outboundChannel;
     private static final int lengthFieldLength = 4;
 
-    public ParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg)){
+    public ParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
         this.ctx = ctx;
         this.outboundChannel = outboundChannel;
         this.msg =msg;
