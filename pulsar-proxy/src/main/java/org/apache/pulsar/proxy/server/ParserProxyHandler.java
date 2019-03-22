@@ -87,8 +87,8 @@ public class ParserProxyHandler {
             if (cmd != null) {
                 cmd.recycle();
             }
-            buffer.resetReaderIndex();
-            buffer.resetWriterIndex();
+            //buffer.resetReaderIndex();
+            //buffer.resetWriterIndex();
         }
         log.info("{}#{}#{}#{}#{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),"s");
     }
