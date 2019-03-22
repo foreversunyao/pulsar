@@ -178,6 +178,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
             PulsarApi.BaseCommand cmd = null;
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
+            String output="";s
             try {
             //
             buffer.markReaderIndex();
@@ -192,8 +193,13 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             System.out.println(".....type:"+ cmd.getType());
-            System.out.println(".....producer:"+ cmd.getProducer().getProducerName());
-            System.out.println(".....message:"+ cmd.getMessage().toString());
+            System.out.println(".....producer:"+ cmd.getProducer().getProducerName()+cmd.getProducer().getTopic());
+            System.out.println(".....send:"+ cmd.getSend());
+            System.out.println(".....topic:"+ cmd.getLookupTopicResponse().getBrokerServiceUrl());
+                for (int i = 0; i < 4; i++) {
+                    byte b = buffer.getByte(i);
+                    output = output+(char)b;
+                }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
             } catch (Exception e){
@@ -211,7 +217,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             }
 
 
-            String output="";
+
 /*
             for (int i = 0; i < 4; i++) {
                 byte b = buffer.getByte(i);
