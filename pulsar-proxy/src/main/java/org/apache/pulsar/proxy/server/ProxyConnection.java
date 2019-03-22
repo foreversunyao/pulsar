@@ -175,10 +175,12 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             //int writerIndex = buffer.writerIndex();
 
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
-            buffer.markReaderIndex();
-            buffer.markWriterIndex();
             PulsarApi.BaseCommand cmd = null;
             PulsarApi.BaseCommand.Builder cmdBuilder = null;
+            try {
+            buffer.markReaderIndex();
+            buffer.markWriterIndex();
+
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
@@ -188,6 +190,22 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             System.out.println(".....type:"+ cmd.getType());
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }finally {
+                if (cmdBuilder != null) {
+                    cmdBuilder.recycle();
+                }
+
+                if (cmd != null) {
+                    cmd.recycle();
+                }
+                buffer.resetReaderIndex();
+                buffer.resetWriterIndex();
+            }
+
+            }
+
             String output="";
 /*
             for (int i = 0; i < 4; i++) {
