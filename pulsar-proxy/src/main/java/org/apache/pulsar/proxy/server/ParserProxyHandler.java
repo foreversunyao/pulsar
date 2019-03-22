@@ -75,8 +75,8 @@ public class ParserProxyHandler {
                     break;
 
             }
-            buffer.resetReaderIndex();
-            buffer.resetWriterIndex();
+          //  buffer.resetReaderIndex();
+          //  buffer.resetWriterIndex();
         } catch (Exception e){
             System.out.println(e.getMessage());
         }finally {
