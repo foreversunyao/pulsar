@@ -200,6 +200,13 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                     case SEND:
                         System.out.println(".....send:" + cmd.getSend());
                         break;
+                    case SUBSCRIBE:
+                        System.out.println(".....consumer name"+cmd.getSubscribe().getConsumerName()+cmd.getSubscribe().getTopic());
+                        break;
+                    case FLOW:
+                        System.out.println("...flow"+cmd.getFlow().toByteString());
+                        break;
+
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
