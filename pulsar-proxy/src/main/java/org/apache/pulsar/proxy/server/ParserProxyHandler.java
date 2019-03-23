@@ -94,7 +94,7 @@ public class ParserProxyHandler {
                     info = " producer:"+cmd.getProducer().getProducerName()+" topic:"+cmd.getProducer().getTopic();
                     break;
             }
-            System.out.println(cmd.getType());
+            //System.out.println(cmd.getType());
             log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
 
         } catch (Exception e){
