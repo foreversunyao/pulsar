@@ -86,7 +86,9 @@ public class ParserProxyHandler {
                     System.out.println(".....consumer name"+cmd.getSubscribe().getConsumerName()+cmd.getSubscribe().getTopic());
                     break;
                 case FLOW:
-                    System.out.println("...flow"+cmd.getFlow().toByteString());
+                    msgMetadata = Commands.parseMessageMetadata(buffer);
+
+                    System.out.println("...flow"+cmd.getFlow().toByteString()+"#"+msgMetadata.getSequenceId()+"#"+msgMetadata.getEventTime());
                     break;
 
             }
