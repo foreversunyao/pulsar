@@ -90,6 +90,7 @@ public class ParserProxyHandler {
                     if (msgMetadata.getEncryptionKeysCount() > 0) {
                        System.out.println("Cannot parse encrypted message " + msgMetadata);
                     }
+                    System.out.println("topic"+cmd.getProducer().getTopic());
                     List<RawMessage> messages = Lists.newArrayList();
                     TopicName topicName = TopicName.get(cmd.getProducer().getTopic());
 
