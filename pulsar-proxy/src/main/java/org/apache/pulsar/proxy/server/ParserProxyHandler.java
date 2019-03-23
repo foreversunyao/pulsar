@@ -98,7 +98,7 @@ public class ParserProxyHandler {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        System.out.println("message:"+messages.get(i));
+                        System.out.println("message:"+(messages.get(i)).getData());
                     }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
