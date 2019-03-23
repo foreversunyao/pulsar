@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-import org.apache.pulsar.client.impl.RawMessageImpl;
+
 
 public class ParserProxyHandler {
     private ChannelHandlerContext ctx;
