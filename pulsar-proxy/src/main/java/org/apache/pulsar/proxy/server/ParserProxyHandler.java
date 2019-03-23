@@ -44,6 +44,7 @@ public class ParserProxyHandler {
     private Object msg;
     private Channel outboundChannel;
     private static final int lengthFieldLength = 4;
+    private String topic="";
 
     public ParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
         this.ctx = ctx;
@@ -80,7 +81,7 @@ public class ParserProxyHandler {
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
-
+                    this.topic=cmd.getProducer().getTopic();
                     break;
                 case SEND:
                     //ByteBuf headersAndPayload = buffer.markReaderIndex();
@@ -90,9 +91,9 @@ public class ParserProxyHandler {
                     if (msgMetadata.getEncryptionKeysCount() > 0) {
                        System.out.println("Cannot parse encrypted message " + msgMetadata);
                     }
-                    System.out.println("topic"+cmd.getProducer().getTopic());
+                    System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
-                    TopicName topicName = TopicName.get(cmd.getProducer().getTopic());
+                    TopicName topicName = TopicName.get(this.topic);
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
