@@ -76,10 +76,10 @@ public class ParserProxyHandler {
                 case SEND:
                     //ByteBuf headersAndPayload = buffer.markReaderIndex();
 
-                    msgMetadata = Commands.parseMessageMetadata(buffer);
+                    //msgMetadata = Commands.parseMessageMetadata(buffer);
 
 
-                    System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression()+msgMetadata.getPublishTime());
+                    //System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression()+msgMetadata.getPublishTime());
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
