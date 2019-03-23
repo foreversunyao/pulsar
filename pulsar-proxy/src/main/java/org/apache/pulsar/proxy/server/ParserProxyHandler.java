@@ -84,7 +84,7 @@ public class ParserProxyHandler {
                     this.topic=cmd.getProducer().getTopic();
                     break;
                 case SEND:
-                    //ByteBuf headersAndPayload = buffer.markReaderIndex();
+                    ByteBuf headersAndPayload = buffer.markReaderIndex();
 
                     msgMetadata = Commands.parseMessageMetadata(buffer);
                     info = "{sequenceid:"+msgMetadata.getSequenceId()+",encrpted:"+msgMetadata.getEncryptionKeysCount()+ ",timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime())+"}";
@@ -96,7 +96,7 @@ public class ParserProxyHandler {
                     TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
-                            -1L,buffer,(message) -> {
+                            -1L,headersAndPayload,(message) -> {
                                 messages.add(message);
                             });
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
