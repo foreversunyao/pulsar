@@ -82,6 +82,7 @@ public class ParserProxyHandler {
 
             }
         } catch (Exception e){
+            log.error("{}",e.getMessage());
             System.out.println(e.getMessage());
         }finally {
             if (cmdBuilder != null) {

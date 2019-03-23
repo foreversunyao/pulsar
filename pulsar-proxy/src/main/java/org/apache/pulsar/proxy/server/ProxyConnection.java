@@ -177,10 +177,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
 
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
 
-            new ParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
-
-            //LOG.info("{}#{}#{}#{}#{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),directProxyHandler.outboundChannel.localAddress(),directProxyHandler.outboundChannel.remoteAddress(),output);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
+            new ParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
             break;
 
         default:
