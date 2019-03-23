@@ -84,19 +84,17 @@ public class ParserProxyHandler {
                     this.topic=cmd.getProducer().getTopic();
                     break;
                 case SEND:
-                    ByteBuf headersAndPayload = buffer.markReaderIndex();
-
-                    msgMetadata = Commands.parseMessageMetadata(buffer);
-                    info = "{sequenceid:"+msgMetadata.getSequenceId()+",encrpted:"+msgMetadata.getEncryptionKeysCount()+ ",timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime())+"}";
-                    if (msgMetadata.getEncryptionKeysCount() > 0) {
-                       System.out.println("Cannot parse encrypted message " + msgMetadata);
-                    }
+                    //msgMetadata = Commands.parseMessageMetadata(buffer);
+                    //info = "{sequenceid:"+msgMetadata.getSequenceId()+",encrpted:"+msgMetadata.getEncryptionKeysCount()+ ",timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime())+"}";
+                    //if (msgMetadata.getEncryptionKeysCount() > 0) {
+                    //   System.out.println("Cannot parse encrypted message " + msgMetadata);
+                   // }
                     System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
                     TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
-                            -1L,headersAndPayload,(message) -> {
+                            -1L,buffer,(message) -> {
                                 messages.add(message);
                             });
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
