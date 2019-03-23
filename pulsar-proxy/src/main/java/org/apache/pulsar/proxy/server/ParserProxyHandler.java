@@ -24,11 +24,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.proto.PulsarApi;
+import org.apache.pulsar.common.api.raw.RawMessageIdImpl;
 import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
+import org.apache.pulsar.client.impl.RawMessageImpl;
+
 public class ParserProxyHandler {
     private ChannelHandlerContext ctx;
     private Object msg;
@@ -57,20 +60,26 @@ public class ParserProxyHandler {
             buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
+            int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
 
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+            buffer.writerIndex(writerIndex);
+            cmdInputStream.recycle();
             System.out.println("type:"+cmd.getType());
             switch (cmd.getType()) {
                 case PRODUCER:
                     System.out.println(".....producer name and topic:" + cmd.getProducer().getProducerName() + cmd.getProducer().getTopic());
                     break;
                 case SEND:
-                    msgMetadata = Commands.parseMessageMetadata(buffer);
+                    ByteBuf headersAndPayload = buffer.markReaderIndex();
 
-                    System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression());
+                    msgMetadata = Commands.parseMessageMetadata(headersAndPayload);
+
+                    System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression()+msgMetadata.getPublishTime());
+                    //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
                 case SUBSCRIBE:
