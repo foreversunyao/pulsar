@@ -20,16 +20,23 @@
 package org.apache.pulsar.proxy.server;
 
 
+import avro.shaded.com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.proto.PulsarApi;
+import org.apache.pulsar.common.api.raw.MessageParser;
+import org.apache.pulsar.common.api.raw.RawMessage;
 import org.apache.pulsar.common.api.raw.RawMessageIdImpl;
+import org.apache.pulsar.common.naming.TopicName;
 import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
+
+import java.io.IOException;
+import java.util.List;
 
 
 public class ParserProxyHandler {
@@ -51,6 +58,7 @@ public class ParserProxyHandler {
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
         String info = "";
         MessageMetadata msgMetadata = null;
+
         try {
             //
             buffer.markReaderIndex();
@@ -71,30 +79,38 @@ public class ParserProxyHandler {
 
             switch (cmd.getType()) {
                 case PRODUCER:
-                    info = " producer:"+cmd.getProducer().getProducerName()+" topic:"+cmd.getProducer().getTopic();
+                    info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
 
                     break;
                 case SEND:
                     //ByteBuf headersAndPayload = buffer.markReaderIndex();
 
                     msgMetadata = Commands.parseMessageMetadata(buffer);
-                    info = "sequenceid:"+msgMetadata.getSequenceId()+" encrpted:"+msgMetadata.getEncryptionKeysCount()+ " timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime());
+                    info = "{sequenceid:"+msgMetadata.getSequenceId()+",encrpted:"+msgMetadata.getEncryptionKeysCount()+ ",timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime())+"}";
+                    if (msgMetadata.getEncryptionKeysCount() > 0) {
+                       System.out.println("Cannot parse encrypted message " + msgMetadata);
+                    }
+                    List<RawMessage> messages = Lists.newArrayList();
+                    TopicName topicName = TopicName.get(cmd.getProducer().getTopic());
 
+                    MessageParser.parseMessage(topicName,  -1L,
+                            -1L,buffer,(message) -> {
+                                messages.add(message);
+                            });
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
                 case SUBSCRIBE:
 
-                    info = " consumer:"+cmd.getSubscribe().getConsumerName()+" topic:"+cmd.getSubscribe().getTopic();
+                    info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
 
                     break;
                 case FLOW:
                     //msgMetadata = Commands.parseMessageMetadata(buffer);
 
-                    info = " producer:"+cmd.getProducer().getProducerName()+" topic:"+cmd.getProducer().getTopic();
+                    info = "{consumer:"+cmd.getFlow()+"}";
                     break;
             }
-            //System.out.println(cmd.getType());
             log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
 
         } catch (Exception e){
