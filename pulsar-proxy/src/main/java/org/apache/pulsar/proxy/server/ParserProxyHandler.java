@@ -60,14 +60,14 @@ public class ParserProxyHandler {
             buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
-            //int writerIndex = buffer.writerIndex();
+            int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
 
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-            //buffer.writerIndex(writerIndex);
-            //cmdInputStream.recycle();
+            buffer.writerIndex(writerIndex);
+            cmdInputStream.recycle();
             System.out.println("type:"+cmd.getType());
             switch (cmd.getType()) {
                 case PRODUCER:
@@ -76,10 +76,10 @@ public class ParserProxyHandler {
                 case SEND:
                     //ByteBuf headersAndPayload = buffer.markReaderIndex();
 
-                    //msgMetadata = Commands.parseMessageMetadata(buffer);
+                    msgMetadata = Commands.parseMessageMetadata(buffer);
 
 
-                    //System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression()+msgMetadata.getPublishTime());
+                    System.out.println(".....send:" + cmd.getSend().getSequenceId()+cmd.getSend().getNumMessages()+msgMetadata.getCompression()+msgMetadata.getPublishTime());
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
