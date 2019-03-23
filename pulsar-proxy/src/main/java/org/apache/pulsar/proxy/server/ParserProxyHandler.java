@@ -78,10 +78,10 @@ public class ParserProxyHandler {
 
                     msgMetadata = Commands.parseMessageMetadata(buffer);
 
-                    log.info("sequenceid:{}#encryption:{}#timecost{}",msgMetadata.getSequenceId()+msgMetadata.getEncryptionKeysCount()+(System.currentTimeMillis()-msgMetadata.getPublishTime()));
+                    log.info("sequenceid:{}#encryption:{}#timecost{}",msgMetadata.getSequenceId(),msgMetadata.getEncryptionKeysCount(),(System.currentTimeMillis()-msgMetadata.getPublishTime()));
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
-                    break;
+                    break;s
                 case SUBSCRIBE:
                     System.out.println(".....consumer name"+cmd.getSubscribe().getConsumerName()+cmd.getSubscribe().getTopic());
                     break;
