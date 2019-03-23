@@ -93,7 +93,7 @@ public class ParserProxyHandler {
                     }
                     System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
-                    TopicName topicName = TopicName.get(this.topic);
+                    TopicName topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
