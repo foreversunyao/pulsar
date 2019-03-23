@@ -49,7 +49,7 @@ public class ParserProxyHandler {
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-
+        String info = "";
         MessageMetadata msgMetadata = null;
         try {
             //
@@ -68,27 +68,30 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println("type:"+cmd.getType());
+
             switch (cmd.getType()) {
                 case PRODUCER:
-                    System.out.println(".....producer name and topic:" + cmd.getProducer().getProducerName() + cmd.getProducer().getTopic());
+                    info = " producer:"+cmd.getProducer().getProducerName()+" topic:"+cmd.getProducer().getTopic();
+
                     break;
                 case SEND:
                     //ByteBuf headersAndPayload = buffer.markReaderIndex();
 
                     msgMetadata = Commands.parseMessageMetadata(buffer);
+                    info = "sequenceid:"+msgMetadata.getSequenceId()+" encrpted:"+msgMetadata.getEncryptionKeysCount()+ " timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime());
 
-                    log.info("sequenceid:{}#encryption:{}#timecost{}",msgMetadata.getSequenceId(),msgMetadata.getEncryptionKeysCount(),(System.currentTimeMillis()-msgMetadata.getPublishTime()));
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
                 case SUBSCRIBE:
-                    System.out.println(".....consumer name"+cmd.getSubscribe().getConsumerName()+cmd.getSubscribe().getTopic());
+
+                    info = " consumer:"+cmd.getSubscribe().getConsumerName()+" topic:"+cmd.getSubscribe().getTopic();
+
                     break;
                 case FLOW:
-                    msgMetadata = Commands.parseMessageMetadata(buffer);
+                    //msgMetadata = Commands.parseMessageMetadata(buffer);
 
-                    System.out.println("...flow"+cmd.getFlow().toByteString()+"#"+msgMetadata.getSequenceId()+"#"+msgMetadata.getEventTime());
+                    info = " producer:"+cmd.getProducer().getProducerName()+" topic:"+cmd.getProducer().getTopic();
                     break;
 
             }
@@ -105,7 +108,7 @@ public class ParserProxyHandler {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
         }
-        log.info("{}#{}#{}#{}#{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),"s");
+        log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
     }
 
 
