@@ -67,7 +67,7 @@ public class ParserProxyHandler {
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
-            cmdInputStream.recycle();
+            //cmdInputStream.recycle();
             System.out.println("type:"+cmd.getType());
             switch (cmd.getType()) {
                 case PRODUCER:
