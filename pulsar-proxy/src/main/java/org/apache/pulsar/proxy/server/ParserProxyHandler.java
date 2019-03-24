@@ -119,9 +119,9 @@ public class ParserProxyHandler {
                 case FLOW:
                     //msgMetadata = Commands.parseMessageMetadata(buffer);
                     System.out.println("topic"+this.topic);
-                    List<RawMessage> messages = Lists.newArrayList();
+                    messages = Lists.newArrayList();
 
-                    TopicName topicName = TopicName.get(this.topic);
+                    topicName = TopicName.get(this.topic);
                     //test topic
                     //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
