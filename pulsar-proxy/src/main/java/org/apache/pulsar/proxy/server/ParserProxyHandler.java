@@ -38,7 +38,7 @@ import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
 import org.apache.pulsar.common.api.raw.MessageParser;
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 
 
 public class ParserProxyHandler {
@@ -59,7 +59,6 @@ public class ParserProxyHandler {
     }
 
     public void parseProxyMsg(){
-        System.out.println("...parseProxyMsg");
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
@@ -108,7 +107,7 @@ public class ParserProxyHandler {
                             });
                     for (int i=0;i <messages.size();i++){
 
-                       System.out.println("message:"+  Base64.decodeBase64(ByteBufUtil.getBytes((messages.get(i)).getData())));
+                       System.out.println("message:"+  Base64.getEncoder().encodeToString(ByteBufUtil.getBytes((messages.get(i)).getData())));
                     }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
