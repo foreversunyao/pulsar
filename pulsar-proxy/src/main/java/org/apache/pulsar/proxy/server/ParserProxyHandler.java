@@ -151,6 +151,7 @@ public class ParserProxyHandler {
                     info = "{consumer:"+cmd.getFlow()+"}";
                     break;
                 case PING:
+                    topicName = TopicName.get(this.topic);
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
@@ -158,6 +159,7 @@ public class ParserProxyHandler {
                     for (int i=0;i <messages.size();i++){
                         System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
+                    break;
             }
             log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
 
