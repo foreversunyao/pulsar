@@ -22,6 +22,7 @@ package org.apache.pulsar.proxy.server;
 
 import avro.shaded.com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.proto.PulsarApi;
@@ -37,6 +38,7 @@ import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
 import org.apache.pulsar.common.api.raw.MessageParser;
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.codec.binary.Base64;
 
 
 public class ParserProxyHandler {
@@ -104,10 +106,10 @@ public class ParserProxyHandler {
                             -1L,buffer,(message) -> {
                                 messages.add(message);
                             });
-                  //  for (int i=0;i <messages.size();i++){
+                    for (int i=0;i <messages.size();i++){
 
-                    //    System.out.println("message:"+(messages.get(i)).getData());
-                   // }
+                       System.out.println("message:"+  Base64.decodeBase64(ByteBufUtil.getBytes((messages.get(i)).getData())));
+                    }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
