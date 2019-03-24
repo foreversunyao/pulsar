@@ -108,7 +108,7 @@ public class ParserProxyHandler {
                     this.topic = cmd.getSubscribe().getTopic();
                     break;
                 case MESSAGE:
-
+                    System.out.println("topic:"+this.topic);
                     messages = Lists.newArrayList();
                     topicName = TopicName.get(this.topic);
 
