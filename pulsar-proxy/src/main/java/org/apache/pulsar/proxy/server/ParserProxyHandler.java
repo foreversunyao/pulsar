@@ -106,8 +106,7 @@ public class ParserProxyHandler {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        System.out.println("messageBase64:"+  Base64.getEncoder().encodeToString(ByteBufUtil.getBytes((messages.get(i)).getData())));
-                        System.out.println("message:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
+                        System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
@@ -119,7 +118,20 @@ public class ParserProxyHandler {
                     break;
                 case FLOW:
                     //msgMetadata = Commands.parseMessageMetadata(buffer);
+                    System.out.println("topic"+this.topic);
+                    List<RawMessage> messages = Lists.newArrayList();
 
+                    TopicName topicName = TopicName.get(this.topic);
+                    //test topic
+                    //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
+
+                    MessageParser.parseMessage(topicName,  -1L,
+                            -1L,buffer,(message) -> {
+                                messages.add(message);
+                            });
+                    for (int i=0;i <messages.size();i++){
+                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
+                    }
                     info = "{consumer:"+cmd.getFlow()+"}";
                     break;
             }
