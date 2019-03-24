@@ -49,6 +49,7 @@ public class ParserProxyHandler {
     private String topic="";
     List<RawMessage> messages = Lists.newArrayList();
     String info ="";
+    TopicName topicName =null;
 
     public ParserProxyHandler(){
 
@@ -92,7 +93,7 @@ public class ParserProxyHandler {
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
-                    TopicName topicName = TopicName.get(this.topic);
+                    topicName = TopicName.get(this.topic);
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -105,7 +106,6 @@ public class ParserProxyHandler {
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
-
                     break;
                 case MESSAGE:
 
