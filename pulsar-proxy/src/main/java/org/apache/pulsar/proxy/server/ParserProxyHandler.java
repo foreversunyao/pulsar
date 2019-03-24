@@ -120,8 +120,12 @@ public class ParserProxyHandler {
 
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
-                    for (int i=0;i<buffer.capacity();i++){
-                        System.out.print((char)buffer.getByte(i));
+                    MessageParser.parseMessage(topicName,  -1L,
+                            -1L,buffer,(message) -> {
+                                messages.add(message);
+                            });
+                    for (int i=0;i <messages.size();i++){
+                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
                     break;
                 case FLOW:
@@ -146,6 +150,14 @@ public class ParserProxyHandler {
                     }
                     info = "{consumer:"+cmd.getFlow()+"}";
                     break;
+                case PING:
+                    MessageParser.parseMessage(topicName,  -1L,
+                            -1L,buffer,(message) -> {
+                                messages.add(message);
+                            });
+                    for (int i=0;i <messages.size();i++){
+                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
+                    }
             }
             log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
 
