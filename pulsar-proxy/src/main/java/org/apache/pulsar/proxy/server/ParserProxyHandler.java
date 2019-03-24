@@ -46,7 +46,10 @@ public class ParserProxyHandler {
     private static final int lengthFieldLength = 4;
     private String topic="";
 
-    public ParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
+    public ParserProxyHandler(){
+
+    }
+    public void setParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
         this.ctx = ctx;
         this.outboundChannel = outboundChannel;
         this.msg =msg;
@@ -91,8 +94,10 @@ public class ParserProxyHandler {
                    // }
                     System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
+
+                    TopicName topicName = TopicName.get(this.topic);
                     //test topic
-                    TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
+                    //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {

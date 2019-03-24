@@ -77,6 +77,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     String clientAuthData;
     String clientAuthMethod;
 
+    private ParserProxyHandler parserProxyHandler = null;
     enum State {
         Init,
 
@@ -176,7 +177,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             //int writerIndex = buffer.writerIndex();
 
             System.out.println(".....readableBytes:"+ buffer.readableBytes());
-            new ParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
+            parserProxyHandler.setParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
 
             break;
