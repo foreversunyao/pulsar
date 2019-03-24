@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-
+import org.apache.pulsar.common.api.raw.MessageParser;
 import java.io.IOException;
 import java.util.List;
 
@@ -91,15 +91,17 @@ public class ParserProxyHandler {
                    // }
                     System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
+                    //test topic
                     TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
                             });
-                    for (int i=0;i <messages.size();i++){
-                        System.out.println("message:"+(messages.get(i)).getData());
-                    }
+                  //  for (int i=0;i <messages.size();i++){
+
+                    //    System.out.println("message:"+(messages.get(i)).getData());
+                   // }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
                     break;
