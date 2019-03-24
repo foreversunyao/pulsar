@@ -127,8 +127,9 @@ public class ParserProxyHandler {
                     //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     for (int i=0;i<buffer.capacity();i++){
-                        System.out.println((char)buffer.getByte(i));
+                        System.out.print((char)buffer.getByte(i));
                     }
+                    System.out.println();
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
