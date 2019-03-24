@@ -47,6 +47,8 @@ public class ParserProxyHandler {
     private Channel outboundChannel;
     private static final int lengthFieldLength = 4;
     private String topic="";
+    List<RawMessage> messages = Lists.newArrayList();
+    String info ="";
 
     public ParserProxyHandler(){
 
@@ -62,8 +64,8 @@ public class ParserProxyHandler {
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-        String info = "";
-        MessageMetadata msgMetadata = null;
+
+        //MessageMetadata msgMetadata = null;
 
         try {
             //
@@ -89,7 +91,7 @@ public class ParserProxyHandler {
                     this.topic=cmd.getProducer().getTopic();
                     break;
                 case SEND:
-                    List<RawMessage> messages = Lists.newArrayList();
+                    messages = Lists.newArrayList();
                     TopicName topicName = TopicName.get(this.topic);
 
                     MessageParser.parseMessage(topicName,  -1L,
@@ -108,13 +110,8 @@ public class ParserProxyHandler {
                 case MESSAGE:
 
                     messages = Lists.newArrayList();
-
                     topicName = TopicName.get(this.topic);
 
-                    for (int i=0;i<buffer.capacity();i++){
-                        System.out.print((char)buffer.getByte(i));
-                    }
-                    System.out.println();
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
