@@ -116,6 +116,9 @@ public class ParserProxyHandler {
 
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
+                    for (int i=0;i<buffer.capacity();i++){
+                        System.out.print((char)buffer.getByte(i));
+                    }
                     break;
                 case FLOW:
                     //msgMetadata = Commands.parseMessageMetadata(buffer);
