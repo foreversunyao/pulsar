@@ -63,7 +63,7 @@ public class DirectProxyHandler {
 
     private final Authentication authentication;
     private final SslContext sslCtx;
-    private ParserProxyHandler parserProxyHandler = null;
+
 
 
     public DirectProxyHandler(ProxyService service, ProxyConnection proxyConnection, String targetBrokerUrl,
@@ -76,7 +76,7 @@ public class DirectProxyHandler {
         this.protocolVersion = protocolVersion;
         this.sslCtx = sslCtx;
         ProxyConfiguration config = service.getConfiguration();
-        parserProxyHandler = new ParserProxyHandler();
+
         System.out.println("...outboundchannel init.. ");
         // Start the connection attempt.
         Bootstrap b = new Bootstrap();
@@ -134,7 +134,7 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
         //private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
-
+        private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             System.out.println("...BackendHandler init.. ");
             this.config = config;

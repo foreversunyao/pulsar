@@ -108,9 +108,10 @@ public class ParserProxyHandler {
                     this.topic = cmd.getSubscribe().getTopic();
                     break;
                 case MESSAGE:
-                    System.out.println("topic:"+this.topic);
+                    //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
+
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(this.topic);
+                    topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
