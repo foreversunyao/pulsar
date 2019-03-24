@@ -83,28 +83,14 @@ public class ParserProxyHandler {
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
 
-            System.out.println("Type:"+cmd.getType());
-            for (int i=0;i<buffer.capacity();i++){
-                System.out.print((char)buffer.getByte(i));
-            }
-            System.out.println();
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
                     break;
                 case SEND:
-                    //msgMetadata = Commands.parseMessageMetadata(buffer);
-                    //info = "{sequenceid:"+msgMetadata.getSequenceId()+",encrpted:"+msgMetadata.getEncryptionKeysCount()+ ",timecost:"+(System.currentTimeMillis()-msgMetadata.getPublishTime())+"}";
-                    //if (msgMetadata.getEncryptionKeysCount() > 0) {
-                    //   System.out.println("Cannot parse encrypted message " + msgMetadata);
-                   // }
-                    System.out.println("topic"+this.topic);
                     List<RawMessage> messages = Lists.newArrayList();
-
                     TopicName topicName = TopicName.get(this.topic);
-                    //test topic
-                    //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -113,31 +99,17 @@ public class ParserProxyHandler {
                     for (int i=0;i <messages.size();i++){
                         System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
-                    //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
-
                     break;
                 case SUBSCRIBE:
-
-                    messages = Lists.newArrayList();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
-                    topicName = TopicName.get(this.topic);
-                    MessageParser.parseMessage(topicName,  -1L,
-                            -1L,buffer,(message) -> {
-                                messages.add(message);
-                            });
-                    for (int i=0;i <messages.size();i++){
-                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
-                    }
+
                     break;
-                case FLOW:
-                    //msgMetadata = Commands.parseMessageMetadata(buffer);
-                    System.out.println("topic"+this.topic);
+                case MESSAGE:
+
                     messages = Lists.newArrayList();
 
                     topicName = TopicName.get(this.topic);
-                    //test topic
-                    //TopicName topicName = TopicName.get("proxy-tenant/proxy-namespace/proxy-v0");
 
                     for (int i=0;i<buffer.capacity();i++){
                         System.out.print((char)buffer.getByte(i));
@@ -148,21 +120,11 @@ public class ParserProxyHandler {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
+                        System.out.println("messageConsume:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
-                    info = "{consumer:"+cmd.getFlow()+"}";
+                    info = "{consumer:"+cmd.getMessage().getConsumerId()+"}";
                     break;
-                case PING:
-                    messages = Lists.newArrayList();
-                    topicName = TopicName.get(this.topic);
-                    MessageParser.parseMessage(topicName,  -1L,
-                            -1L,buffer,(message) -> {
-                                messages.add(message);
-                            });
-                    for (int i=0;i <messages.size();i++){
-                        System.out.println("messageFlow:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
-                    }
-                    break;
+
             }
             log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
 
