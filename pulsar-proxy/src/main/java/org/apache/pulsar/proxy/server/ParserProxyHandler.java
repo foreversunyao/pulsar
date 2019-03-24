@@ -117,10 +117,11 @@ public class ParserProxyHandler {
 
                     break;
                 case SUBSCRIBE:
-                    topicName = TopicName.get(this.topic);
+
                     messages = Lists.newArrayList();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
+                    topicName = TopicName.get(this.topic);
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
