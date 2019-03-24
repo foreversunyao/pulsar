@@ -57,6 +57,7 @@ public class ParserProxyHandler {
     }
 
     public void parseProxyMsg(){
+        System.out.println("...parseProxyMsg");
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
