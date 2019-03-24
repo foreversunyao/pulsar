@@ -117,7 +117,8 @@ public class ParserProxyHandler {
 
                     break;
                 case SUBSCRIBE:
-
+                    topicName = TopicName.get(this.topic);
+                    messages = Lists.newArrayList();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
                     MessageParser.parseMessage(topicName,  -1L,
@@ -151,6 +152,7 @@ public class ParserProxyHandler {
                     info = "{consumer:"+cmd.getFlow()+"}";
                     break;
                 case PING:
+                    messages = Lists.newArrayList();
                     topicName = TopicName.get(this.topic);
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
