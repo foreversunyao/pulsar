@@ -106,9 +106,8 @@ public class ParserProxyHandler {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-
-                       System.out.println("messageBase64:"+  Base64.getEncoder().encodeToString(ByteBufUtil.getBytes((messages.get(i)).getData())));
-                        System.out.println("message:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF_8"));
+                        System.out.println("messageBase64:"+  Base64.getEncoder().encodeToString(ByteBufUtil.getBytes((messages.get(i)).getData())));
+                        System.out.println("message:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
                     //ByteBuf headersAndPayload_new = headersAndPayload.retainedSlice();
 
