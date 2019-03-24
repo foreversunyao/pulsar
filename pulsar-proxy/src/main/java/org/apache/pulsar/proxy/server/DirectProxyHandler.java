@@ -64,6 +64,8 @@ public class DirectProxyHandler {
     private final Authentication authentication;
     private final SslContext sslCtx;
 
+    private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
+
     public DirectProxyHandler(ProxyService service, ProxyConnection proxyConnection, String targetBrokerUrl,
             int protocolVersion, SslContext sslCtx) {
         this.authentication = proxyConnection.getClientAuthentication();
@@ -172,6 +174,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
+                parserProxyHandler.setParserProxyHandler(ctx, inboundChannel,msg);
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
                 default:
