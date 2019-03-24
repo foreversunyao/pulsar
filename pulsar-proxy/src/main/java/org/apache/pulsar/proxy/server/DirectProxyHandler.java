@@ -64,7 +64,7 @@ public class DirectProxyHandler {
     private final Authentication authentication;
     private final SslContext sslCtx;
 
-    private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
+
 
     public DirectProxyHandler(ProxyService service, ProxyConnection proxyConnection, String targetBrokerUrl,
             int protocolVersion, SslContext sslCtx) {
@@ -132,6 +132,7 @@ public class DirectProxyHandler {
         protected ChannelHandlerContext ctx;
         private ProxyConfiguration config;
         private int protocolVersion;
+        private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
 
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             System.out.println("...BackendHandler init.. ");
