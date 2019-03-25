@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import java.util.List;
+import java.util.Hashtable;
+import java.util.Map;
 
 
 public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
@@ -44,6 +46,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private String topic="";
     private String type;
     private List<RawMessage> messages = null;
+    private static Map<String, String> producerHashTable = new Hashtable<>();
+    private static Map<String, String> consumerHashTable = new Hashtable<>();
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
@@ -87,12 +91,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerId()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
+                    ParserProxyHandler.producerHashTable.put(String.valueOf(cmd.getProducer().getProducerId()),cmd.getProducer().getTopic());
 
                     break;
                 case SEND:
                     System.out.println("#######producerid:"+cmd.getProducer().getProducerId());
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(this.topic);
+                    topicName = TopicName.get(ParserProxyHandler.producerHashTable.get(String.valueOf(cmd.getProducer().getProducerId())));
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -105,11 +110,14 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 case SUBSCRIBE:
                     this.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerId()+",topic:"+cmd.getSubscribe().getTopic()+"}";
+                    ParserProxyHandler.consumerHashTable.put(String.valueOf(cmd.getSubscribe().getConsumerId()),cmd.getSubscribe().getTopic());
                     break;
                 case MESSAGE:
                     System.out.println("#######consumerid:"+cmd.getMessage().getConsumerId());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-                    topicName=TopicName.get(this.topic);
+
+                    //topicName=TopicName.get(this.topic);
+                    topicName = TopicName.get(ParserProxyHandler.consumerHashTable.get(String.valueOf(cmd.getMessage().getConsumerId())));
                     messages = Lists.newArrayList();
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
