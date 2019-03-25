@@ -129,7 +129,7 @@ public class ParserProxyHandler {
 
             }
             if (type=="proxyconn"){
-                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",channel.localAddress(),channel.remoteAddress(),ctx.channel().remoteAddress(),ctx.channel().localAddress(),cmd.getType(),info);
+                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",channel.remoteAddress(),channel.localAddress(),ctx.channel().remoteAddress(),ctx.channel().localAddress(),cmd.getType(),info);
 
             }
             else if (type=="backendconn"){
