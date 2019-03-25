@@ -70,6 +70,7 @@ public class ParserProxyHandler {
     private synchronized void parseProxyMsg(){
         this.info="";
         ByteBuf buffer = (ByteBuf)(this.msg);
+        MessageMetadata msgMetadata = null;
         try {
             //
             buffer.markReaderIndex();
@@ -90,7 +91,7 @@ public class ParserProxyHandler {
             //System.out.println(type+"#"+cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
             switch (cmd.getType()) {
                 case PRODUCER:
-                    MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
+                    msgMetadata = Commands.parseMessageMetadata(buffer);
                     info = " {producer:"+cmd.getProducer().getProducerName()+",sequenceid:"+msgMetadata.getSequenceId()+",topic:"+cmd.getProducer().getTopic()+"}";
                     ParserProxyHandler.topic=cmd.getProducer().getTopic();
 
@@ -108,8 +109,7 @@ public class ParserProxyHandler {
                     }
                     break;
                 case SUBSCRIBE:
-
-                    MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
+                    msgMetadata = Commands.parseMessageMetadata(buffer);
                     ParserProxyHandler.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",sequenceid:"+msgMetadata.getSequenceId()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     break;
