@@ -89,7 +89,6 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            //System.out.println(type+"#"+cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
