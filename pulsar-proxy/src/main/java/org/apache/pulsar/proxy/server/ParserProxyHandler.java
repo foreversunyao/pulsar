@@ -51,30 +51,25 @@ public class ParserProxyHandler {
     private String info;
     private TopicName topicName;
     private String type;
-    private static int count=0;
-    private static int setCount=0;
+    private PulsarApi.BaseCommand cmd = null;
+    private PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
     public ParserProxyHandler(){
 
     }
     public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
-        ParserProxyHandler.setCount++;
-        System.out.println("#setCount:"+setCount);
+
         this.ctx = ctx;
         this.channel = channel;
         this.msg =msg;
-        this.info="";
         this.type=type;
         this.parseProxyMsg();
 
     }
 
     private synchronized void parseProxyMsg(){
+        this.info="";
         ByteBuf buffer = (ByteBuf)(this.msg);
-        PulsarApi.BaseCommand cmd = null;
-        PulsarApi.BaseCommand.Builder cmdBuilder = null;
-        //MessageMetadata msgMetadata = null;
-
         try {
             //
             buffer.markReaderIndex();
@@ -92,10 +87,11 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println(type+"#"+cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
+            //System.out.println(type+"#"+cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
             switch (cmd.getType()) {
                 case PRODUCER:
-                    info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
+                    MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
+                    info = " {producer:"+cmd.getProducer().getProducerName()+",sequenceid:"+msgMetadata.getSequenceId()+",topic:"+cmd.getProducer().getTopic()+"}";
                     ParserProxyHandler.topic=cmd.getProducer().getTopic();
 
                     break;
@@ -108,46 +104,37 @@ public class ParserProxyHandler {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
-                    }
-
-                    break;
-                case ACK:
-                    for (int i=0;i<buffer.capacity();i++)
-                    {
-                        System.out.print((char)buffer.getByte(i));
-                    }
-                    break;
-                case FLOW:
-                    for (int i=0;i<buffer.capacity();i++)
-                    {
-                        System.out.print((char)buffer.getByte(i));
+                        this.info= this.info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
                     break;
                 case SUBSCRIBE:
-                    info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
+
+                    MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     ParserProxyHandler.topic = cmd.getSubscribe().getTopic();
+                    info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",sequenceid:"+msgMetadata.getSequenceId()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     break;
                 case MESSAGE:
-
-
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName=TopicName.get(ParserProxyHandler.topic);
                     messages = Lists.newArrayList();
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
-
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        System.out.println("messageConsume:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
+                        this.info= this.info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
-                    info = "{consumer:"+cmd.getMessage().getConsumerId()+"}";
                     break;
 
             }
-            log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),channel.localAddress(),channel.remoteAddress(),cmd.getType(),info);
+            if (type=="proxyconn"){
+                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",channel.localAddress(),channel.remoteAddress(),ctx.channel().remoteAddress(),ctx.channel().localAddress(),cmd.getType(),info);
+
+            }
+            else if (type=="backendconn"){
+                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),channel.localAddress(),channel.remoteAddress(),cmd.getType(),info);
+            }
 
         } catch (Exception e){
             log.error("{}",e.getMessage());
