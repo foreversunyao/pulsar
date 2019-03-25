@@ -70,6 +70,7 @@ public class ParserProxyHandler {
     private synchronized void parseProxyMsg(){
         this.info="";
         ByteBuf buffer = (ByteBuf)(this.msg);
+        String conn ="";
         //MessageMetadata msgMetadata = null;
         try {
             //
@@ -126,13 +127,13 @@ public class ParserProxyHandler {
                     break;
 
             }
-            if (type=="proxyconn"){
-                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",channel.remoteAddress(),channel.localAddress(),ctx.channel().remoteAddress(),ctx.channel().localAddress(),cmd.getType(),info);
-
+            if (this.type=="proxyconn"){
+                conn = "["+ ctx.channel().remoteAddress()+"|"+ctx.channel().localAddress()+"|"+channel.localAddress()+"|"+channel.remoteAddress()+"]";
             }
-            else if (type=="backendconn"){
-                log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),channel.localAddress(),channel.remoteAddress(),cmd.getType(),info);
+            else if (this.type=="backendconn"){
+                conn = "["+channel.remoteAddress()+"|"+channel.localAddress()+"|"+ctx.channel().localAddress()+"|"+ctx.channel().remoteAddress()+"]";
             }
+            log.info("conn:{} cmd:{} msg:{}",conn,cmd.getType(),info);
 
         } catch (Exception e){
             log.error("{}",e.getMessage());

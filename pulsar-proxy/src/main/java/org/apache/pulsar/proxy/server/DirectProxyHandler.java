@@ -202,7 +202,6 @@ public class DirectProxyHandler {
         @Override
         protected void messageReceived() {
             // no-op
-            System.out.println("####messageReceived####");
         }
 
         @Override
