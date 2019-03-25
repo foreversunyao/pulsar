@@ -53,15 +53,15 @@ public class ParserProxyHandler {
     private String type;
 
     public ParserProxyHandler(){
-
     }
     public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
         this.ctx = ctx;
         this.channel = channel;
         this.msg =msg;
         this.info="";
-        this.parseProxyMsg();
         this.type=type;
+        this.parseProxyMsg();
+
     }
 
     private synchronized void parseProxyMsg(){
