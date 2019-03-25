@@ -85,12 +85,12 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-
+            System.out.println(cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
-                    System.out.println("producer"+java.lang.System.identityHashCode(this));
+
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
@@ -103,21 +103,21 @@ public class ParserProxyHandler {
                     for (int i=0;i <messages.size();i++){
                         System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
-                    System.out.println("send"+java.lang.System.identityHashCode(this));
+
                     break;
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
                     topicName = TopicName.get(this.topic);
-                    System.out.println("subscrbie:"+java.lang.System.identityHashCode(this));
+
                     break;
                 case SUCCESS:
-                    System.out.println("success:"+java.lang.System.identityHashCode(this));
+
                     info = "success:"+cmd.getSuccess().getSchema().getName();
                     break;
                 case MESSAGE:
 
-                    System.out.println("message:"+java.lang.System.identityHashCode(this));
+
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
