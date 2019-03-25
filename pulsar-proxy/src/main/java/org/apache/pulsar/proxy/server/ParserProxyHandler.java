@@ -51,8 +51,11 @@ public class ParserProxyHandler {
     private String info;
     private TopicName topicName;
     private String type;
+    private static int count=0;
 
     public ParserProxyHandler(){
+        ParserProxyHandler.count++;
+        System.out.println("#count:"+count);
     }
     public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
         this.ctx = ctx;
