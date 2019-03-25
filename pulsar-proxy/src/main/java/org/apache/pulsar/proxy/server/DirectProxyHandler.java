@@ -134,11 +134,12 @@ public class DirectProxyHandler {
         private ProxyConfiguration config;
         private int protocolVersion;
         //private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
-        private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
+        private ParserProxyHandler parserProxyHandler ;
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
             System.out.println("...BackendHandler init.. ");
             this.config = config;
             this.protocolVersion = protocolVersion;
+            this.parserProxyHandler = new ParserProxyHandler();
         }
 
         @Override

@@ -60,7 +60,6 @@ public class ParserProxyHandler {
         this.msg =msg;
         this.messages = Lists.newArrayList();
         this.info="";
-        this.topicName=null;
         this.parseProxyMsg();
     }
 
@@ -118,7 +117,7 @@ public class ParserProxyHandler {
                 case MESSAGE:
                     //System.out.println("message:"+this.to);
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-
+                    topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
 
