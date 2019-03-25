@@ -54,7 +54,7 @@ public class ParserProxyHandler {
     public ParserProxyHandler(){
 
     }
-    public void setParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
+    public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
         this.ctx = ctx;
         this.outboundChannel = outboundChannel;
         this.msg =msg;
@@ -62,7 +62,7 @@ public class ParserProxyHandler {
         this.parseProxyMsg();
     }
 
-    private void parseProxyMsg(){
+    private synchronized void parseProxyMsg(){
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
@@ -110,10 +110,6 @@ public class ParserProxyHandler {
                     this.topic = cmd.getSubscribe().getTopic();
                     topicName = TopicName.get(this.topic);
 
-                    break;
-                case SUCCESS:
-
-                    info = "success:"+cmd.getSuccess().getSchema().getName();
                     break;
                 case MESSAGE:
 
