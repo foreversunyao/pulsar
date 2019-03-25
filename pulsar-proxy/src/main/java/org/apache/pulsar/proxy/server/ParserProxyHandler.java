@@ -101,7 +101,7 @@ public class ParserProxyHandler {
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(ParserProxyHandler.topic=);
+                    topicName = TopicName.get(ParserProxyHandler.topic);
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
