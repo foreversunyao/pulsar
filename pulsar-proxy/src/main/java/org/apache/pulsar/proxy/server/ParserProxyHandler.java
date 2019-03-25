@@ -91,7 +91,7 @@ public class ParserProxyHandler {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
-                    System.out.println("producer"+this.hashCode());
+                    System.out.println("producer"+this.getClass().hashCode());
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
@@ -104,21 +104,21 @@ public class ParserProxyHandler {
                     for (int i=0;i <messages.size();i++){
                         System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
-                    System.out.println("send"+this.hashCode());
+                    System.out.println("send"+this.getClass().hashCode());
                     break;
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
                     topicName = TopicName.get(this.topic);
-                    System.out.println("subscrbie:"+this.hashCode());
+                    System.out.println("subscrbie:"+this.getClass().hashCode()));
                     break;
                 case SUCCESS:
-                    System.out.println("success:"+this.getClass());
+                    System.out.println("success:"+this.getClass().hashCode());
                     info = "success:"+cmd.getSuccess().getSchema().getName();
                     break;
                 case MESSAGE:
 
-                    System.out.println("message:"+this.hashCode());
+                    System.out.println("message:"+this.getClass().hashCode());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
