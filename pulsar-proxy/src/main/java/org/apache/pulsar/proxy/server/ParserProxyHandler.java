@@ -44,22 +44,24 @@ import java.util.Base64;
 public class ParserProxyHandler {
     private ChannelHandlerContext ctx;
     private Object msg;
-    private Channel outboundChannel;
+    private Channel channel;
     private static final int lengthFieldLength = 4;
     private String topic="";
     private List<RawMessage> messages;
     private String info;
     private TopicName topicName;
+    private String type;
 
     public ParserProxyHandler(){
 
     }
-    public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel outboundChannel, Object msg){
+    public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
         this.ctx = ctx;
-        this.outboundChannel = outboundChannel;
+        this.channel = channel;
         this.msg =msg;
         this.info="";
         this.parseProxyMsg();
+        this.type=type;
     }
 
     private synchronized void parseProxyMsg(){
@@ -85,7 +87,7 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println(cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
+            System.out.println(type+"#"+cmd.getType().toString()+"#"+java.lang.System.identityHashCode(this));
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
@@ -130,7 +132,7 @@ public class ParserProxyHandler {
                     break;
 
             }
-            log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),outboundChannel.localAddress(),outboundChannel.remoteAddress(),cmd.getType(),info);
+            log.info("cr:{} pi:{} po:{} pr:{} cmd:{} info:{}",ctx.channel().remoteAddress(),ctx.channel().localAddress(),channel.localAddress(),channel.remoteAddress(),cmd.getType(),info);
 
         } catch (Exception e){
             log.error("{}",e.getMessage());
