@@ -49,6 +49,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private static final int lengthFieldLength = 4;
     private String topic="";
     private String type;
+    private List<RawMessage> messages = null;
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
@@ -63,7 +64,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         System.out.println("#########here");
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-        List<RawMessage> messages = null;
+
         TopicName topicName = null;
         String info="";
         String conn ="";
