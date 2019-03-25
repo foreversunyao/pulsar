@@ -47,7 +47,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private Object msg;
     private Channel channel;
     private static final int lengthFieldLength = 4;
-    private static String topic="";
+    private String topic="";
     private List<RawMessage> messages;
     private String info;
     private TopicName topicName;
@@ -98,12 +98,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
-                    ParserProxyHandler.topic=cmd.getProducer().getTopic();
+                    this.topic=cmd.getProducer().getTopic();
 
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(ParserProxyHandler.topic);
+                    topicName = TopicName.get(this.topic);
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -114,12 +114,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     }
                     break;
                 case SUBSCRIBE:
-                    ParserProxyHandler.topic = cmd.getSubscribe().getTopic();
+                    this.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     break;
                 case MESSAGE:
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-                    topicName=TopicName.get(ParserProxyHandler.topic);
+                    topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
