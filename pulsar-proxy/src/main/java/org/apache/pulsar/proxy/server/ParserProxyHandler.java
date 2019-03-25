@@ -91,7 +91,7 @@ public class ParserProxyHandler {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
-                    System.out.println("producer"+this.hashCode()));
+                    System.out.println("producer"+this.hashCode());
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
