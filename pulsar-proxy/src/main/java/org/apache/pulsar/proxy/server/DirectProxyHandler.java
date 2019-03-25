@@ -160,7 +160,6 @@ public class DirectProxyHandler {
 
         @Override
         public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
-            System.out.println("...BackendHandler channelRead..state: "+state);
             switch (state) {
             case Init:
                 if (log.isDebugEnabled()) {
