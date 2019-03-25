@@ -25,21 +25,15 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.raw.MessageParser;
 import org.apache.pulsar.common.api.raw.RawMessage;
-import org.apache.pulsar.common.api.raw.RawMessageIdImpl;
 import org.apache.pulsar.common.naming.TopicName;
 import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
-import org.apache.pulsar.common.api.proto.PulsarApi.MessageMetadata;
-import org.apache.pulsar.common.api.raw.MessageParser;
-import java.io.IOException;
 import java.util.List;
-import java.util.Base64;
 
 
 public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
@@ -61,7 +55,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     }
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("#########here");
+
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
@@ -96,6 +90,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     break;
                 case SEND:
+                    System.out.println("#######producerid:"+cmd.getProducer().getProducerId());
                     messages = Lists.newArrayList();
                     topicName = TopicName.get(this.topic);
 
@@ -112,6 +107,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     break;
                 case MESSAGE:
+                    System.out.println("#######consumerid:"+cmd.getMessage().getConsumerId());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
