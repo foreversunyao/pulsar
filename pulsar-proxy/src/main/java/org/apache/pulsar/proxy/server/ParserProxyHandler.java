@@ -43,40 +43,33 @@ import java.util.Base64;
 
 
 public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
-    private ChannelHandlerContext ctx;
-    private Object msg;
+
+
     private Channel channel;
     private static final int lengthFieldLength = 4;
     private String topic="";
-    private List<RawMessage> messages;
-    private String info;
-    private TopicName topicName;
     private String type;
-    private PulsarApi.BaseCommand cmd = null;
-    private PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
         this.type=type;
     }
-    public synchronized void setParserProxyHandler(Channel channel, String type){
 
+    private void logging (PulsarApi.BaseCommand cmd, String info){
 
-        this.channel = channel;
-        this.type=type;
-        //this.parseProxyMsg();
 
     }
-
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println("#########here");
-
-        this.ctx = ctx;
-        this.msg = msg;
-
-        this.info="";
-        ByteBuf buffer = (ByteBuf)(this.msg);
+        PulsarApi.BaseCommand cmd = null;
+        PulsarApi.BaseCommand.Builder cmdBuilder = null;
+        List<RawMessage> messages = null;
+        TopicName topicName = null;
+        String info="";
         String conn ="";
+        System.out.println("######channelid:"+ctx.channel().id());
+        ByteBuf buffer = (ByteBuf)(msg);
+
         //MessageMetadata msgMetadata = null;
         try {
             //
@@ -110,7 +103,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        this.info= this.info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
+                        info= info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
                     break;
                 case SUBSCRIBE:
@@ -127,7 +120,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 messages.add(message);
                             });
                     for (int i=0;i <messages.size();i++){
-                        this.info= this.info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
+                        info= info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
                     break;
 
@@ -146,16 +139,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             if (cmdBuilder != null) {
                 cmdBuilder.recycle();
             }
-
             if (cmd != null) {
                 cmd.recycle();
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
         }
-
         ctx.fireChannelRead(msg);
-
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
