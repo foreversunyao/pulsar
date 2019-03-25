@@ -89,7 +89,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmdInputStream.recycle();
             switch (cmd.getType()) {
                 case PRODUCER:
-                    info = " {producer:"+cmd.getProducer().getProducerId()+",topic:"+cmd.getProducer().getTopic()+"}";
+                    info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
                     ParserProxyHandler.producerHashTable.put(String.valueOf(cmd.getProducer().getProducerId()),cmd.getProducer().getTopic());
 
@@ -109,7 +109,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
                 case SUBSCRIBE:
                     this.topic = cmd.getSubscribe().getTopic();
-                    info = "{consumer:"+cmd.getSubscribe().getConsumerId()+",topic:"+cmd.getSubscribe().getTopic()+"}";
+                    info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     ParserProxyHandler.consumerHashTable.put(String.valueOf(cmd.getSubscribe().getConsumerId()),cmd.getSubscribe().getTopic());
                     break;
                 case MESSAGE:
