@@ -109,17 +109,18 @@ public class ParserProxyHandler {
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
+                    topicName = TopicName.get(this.topic);
                     System.out.println("subscrbie:"+this.getClass());
                     break;
                 case SUCCESS:
                     System.out.println("success:"+this.getClass());
                     info = "success:"+cmd.getSuccess().getSchema().getName();
                 case MESSAGE:
-                    System.out.println("message:"+this.getClass());
+                    //System.out.println("message:"+this.to);
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
 
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
+                    //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
