@@ -77,7 +77,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     String clientAuthData;
     String clientAuthMethod;
 
-    private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
+    //private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
     enum State {
         Init,
 
