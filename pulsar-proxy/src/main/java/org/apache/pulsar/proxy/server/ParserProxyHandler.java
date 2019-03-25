@@ -58,7 +58,6 @@ public class ParserProxyHandler {
         this.ctx = ctx;
         this.outboundChannel = outboundChannel;
         this.msg =msg;
-        this.messages = Lists.newArrayList();
         this.info="";
         this.parseProxyMsg();
     }
@@ -87,7 +86,7 @@ public class ParserProxyHandler {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            info = cmd.getType().toString();
+
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";

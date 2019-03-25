@@ -155,17 +155,16 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
         switch (state) {
         case Init:
-            System.out.println("...proxy channelread init");
+
         case ProxyLookupRequests:
             // Do the regular decoding for the Connected message
-            System.out.println("...proxy channelread ProxyLookupRequests");
             super.channelRead(ctx, msg);
             break;
 
         case ProxyConnectionToBroker:
             // Pass the buffer to the outbound connection and schedule next read
             // only if we can write on the connection
-            System.out.println("...proxy channelread ProxyConnectionToBroker ");
+
             ProxyService.opsCounter.inc();
             if (msg instanceof ByteBuf) {
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
@@ -176,7 +175,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
 
             //int writerIndex = buffer.writerIndex();
 
-            System.out.println(".....readableBytes:"+ buffer.readableBytes());
+
             parserProxyHandler.setParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg);
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
 
@@ -191,7 +190,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     public void operationComplete(Future<Void> future) throws Exception {
         // This is invoked when the write operation on the paired connection is
         // completed
-        System.out.println("proxy operationComplete");
+
         if (future.isSuccess()) {
             ctx.read();
         } else {
@@ -239,7 +238,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // connection
             // there and just pass bytes in both directions
             state = State.ProxyConnectionToBroker;
-            System.out.println("...proxy handler connect, state set to ProxyConnectionToBroker ");
+
             directProxyHandler = new DirectProxyHandler(service, this, connect.getProxyToBrokerUrl(),
                     protocolVersionToAdvertise, sslCtx);
             cancelKeepAliveTask();
@@ -248,7 +247,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // and we'll take care of just topics and
             // partitions metadata lookups
             state = State.ProxyLookupRequests;
-            System.out.println("...proxy handler connect, state set to ProxyLookupRequests ");
+
             lookupProxyHandler = new LookupProxyHandler(service, this);
             ctx.writeAndFlush(Commands.newConnected(protocolVersionToAdvertise));
         }

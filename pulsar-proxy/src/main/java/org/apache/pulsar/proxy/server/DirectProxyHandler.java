@@ -136,7 +136,7 @@ public class DirectProxyHandler {
         //private ParserProxyHandler parserProxyHandler = new ParserProxyHandler();
         private ParserProxyHandler parserProxyHandler ;
         public ProxyBackendHandler(ProxyConfiguration config, int protocolVersion) {
-            System.out.println("...BackendHandler init.. ");
+
             this.config = config;
             this.protocolVersion = protocolVersion;
             this.parserProxyHandler = new ParserProxyHandler();
@@ -145,7 +145,7 @@ public class DirectProxyHandler {
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             this.ctx = ctx;
-            System.out.println("...BackendHandler channelAtive.. ");
+
             // Send the Connect command to broker
             String authData = "";
             if (authentication.getAuthData().hasDataFromCommand()) {
@@ -191,7 +191,6 @@ public class DirectProxyHandler {
         public void operationComplete(Future<Void> future) throws Exception {
             // This is invoked when the write operation on the paired connection
             // is completed
-            System.out.println("...BackendHandler operationComplete.. ");
             if (future.isSuccess()) {
                 outboundChannel.read();
             } else {
