@@ -59,7 +59,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     }
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
+//TODO , if channel closed, remove producerid/consumerid under this channel
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
