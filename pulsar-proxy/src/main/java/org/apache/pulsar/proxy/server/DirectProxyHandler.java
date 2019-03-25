@@ -176,7 +176,7 @@ public class DirectProxyHandler {
                 if (msg instanceof ByteBuf) {
                     ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
                 }
-                parserProxyHandler.setParserProxyHandler(ctx, inboundChannel,msg,"backendconn");
+                //parserProxyHandler.setParserProxyHandler(ctx, inboundChannel,msg,"backendconn");
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
 
@@ -247,7 +247,7 @@ public class DirectProxyHandler {
 
         public void setRemoteHostName(String remoteHostName) {
             this.remoteHostName = remoteHostName;
-            this.parserProxyHandler = new ParserProxyHandler();
+            //this.parserProxyHandler = new ParserProxyHandler();
         }
 
         private boolean verifyTlsHostName(String hostname, ChannelHandlerContext ctx) {

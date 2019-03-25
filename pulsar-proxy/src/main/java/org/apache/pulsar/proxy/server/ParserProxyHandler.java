@@ -24,6 +24,7 @@ import avro.shaded.com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.pulsar.common.api.Commands;
 import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.raw.MessageParser;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.Base64;
 
 
-public class ParserProxyHandler {
+public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private ChannelHandlerContext ctx;
     private Object msg;
     private Channel channel;
@@ -67,7 +68,13 @@ public class ParserProxyHandler {
 
     }
 
-    private synchronized void parseProxyMsg(){
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("#########here");
+        ctx.fireChannelRead(msg);
+
+    }
+
+    private synchronized void parseProxyMsg() {
         this.info="";
         ByteBuf buffer = (ByteBuf)(this.msg);
         String conn ="";

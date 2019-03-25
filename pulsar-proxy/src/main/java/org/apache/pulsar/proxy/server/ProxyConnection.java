@@ -90,6 +90,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         // looking into it
         ProxyConnectionToBroker,
 
+        //ProxyParse,
+
         Closed,
     }
 
@@ -159,8 +161,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         case ProxyLookupRequests:
             // Do the regular decoding for the Connected message
             super.channelRead(ctx, msg);
-            break;
-
+            break ;
         case ProxyConnectionToBroker:
             // Pass the buffer to the outbound connection and schedule next read
             // only if we can write on the connection
@@ -170,7 +171,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                 ProxyService.bytesCounter.inc(((ByteBuf) msg).readableBytes());
             }
 
-            parserProxyHandler.setParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg,"proxyconn");
+           //parserProxyHandler.setParserProxyHandler(ctx, directProxyHandler.outboundChannel,msg,"proxyconn");
             directProxyHandler.outboundChannel.writeAndFlush(msg).addListener(this);
 
             break;
@@ -231,8 +232,8 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             // Client already knows which broker to connect. Let's open a
             // connection
             // there and just pass bytes in both directions
+            //state = State.ProxyConnectionToBroker;
             state = State.ProxyConnectionToBroker;
-
             directProxyHandler = new DirectProxyHandler(service, this, connect.getProxyToBrokerUrl(),
                     protocolVersionToAdvertise, sslCtx);
             cancelKeepAliveTask();
