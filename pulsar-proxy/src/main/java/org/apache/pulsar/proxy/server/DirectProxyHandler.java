@@ -116,6 +116,7 @@ public class DirectProxyHandler {
                 inboundChannel.close();
                 return;
             }
+            System.out.println("...................ProxyBackendHandler...........two");
             final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                     .get("proxyOutboundHandler");
             cnx.setRemoteHostName(targetBroker.getHost());
