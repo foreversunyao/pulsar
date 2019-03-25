@@ -116,9 +116,9 @@ public class DirectProxyHandler {
                 inboundChannel.close();
                 return;
             }
-            System.out.println("...................ProxyBackendHandler...........two");
             final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                     .get("proxyOutboundHandler");
+
             cnx.setRemoteHostName(targetBroker.getHost());
         });
     }
@@ -140,7 +140,6 @@ public class DirectProxyHandler {
 
             this.config = config;
             this.protocolVersion = protocolVersion;
-            this.parserProxyHandler = new ParserProxyHandler();
         }
 
         @Override
@@ -248,6 +247,7 @@ public class DirectProxyHandler {
 
         public void setRemoteHostName(String remoteHostName) {
             this.remoteHostName = remoteHostName;
+            this.parserProxyHandler = new ParserProxyHandler();
         }
 
         private boolean verifyTlsHostName(String hostname, ChannelHandlerContext ctx) {
