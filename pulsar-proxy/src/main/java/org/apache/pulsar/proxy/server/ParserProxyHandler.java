@@ -109,10 +109,10 @@ public class ParserProxyHandler {
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
-                    System.out.println("subscrbie:"this.getClass());
+                    System.out.println("subscrbie:"+this.getClass());
                     break;
                 case SUCCESS:
-                    System.out.println("success:"this.getClass());
+                    System.out.println("success:"+this.getClass());
                     info = "success:"+cmd.getSuccess().getSchema().getName();
                 case MESSAGE:
                     System.out.println("message:"+this.getClass());
