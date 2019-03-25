@@ -179,7 +179,8 @@ public class DirectProxyHandler {
                 parserProxyHandler.setParserProxyHandler(ctx, inboundChannel,msg);
                 inboundChannel.writeAndFlush(msg).addListener(this);
                 break;
-                default:
+
+            default:
                 break;
             }
 

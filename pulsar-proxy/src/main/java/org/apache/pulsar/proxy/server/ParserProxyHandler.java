@@ -47,9 +47,9 @@ public class ParserProxyHandler {
     private Channel outboundChannel;
     private static final int lengthFieldLength = 4;
     private String topic="";
-    List<RawMessage> messages = Lists.newArrayList();
-    String info ="";
-    TopicName topicName =null;
+    private List<RawMessage> messages;
+    private String info;
+    private TopicName topicName;
 
     public ParserProxyHandler(){
 
@@ -58,10 +58,13 @@ public class ParserProxyHandler {
         this.ctx = ctx;
         this.outboundChannel = outboundChannel;
         this.msg =msg;
+        this.messages = Lists.newArrayList();
+        this.info="";
+        this.topicName=null;
         this.parseProxyMsg();
     }
 
-    public void parseProxyMsg(){
+    private void parseProxyMsg(){
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
@@ -106,8 +109,13 @@ public class ParserProxyHandler {
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
+                    System.out.println("subscrbie:"this.getClass());
                     break;
+                case SUCCESS:
+                    System.out.println("success:"this.getClass());
+                    info = "success:"+cmd.getSuccess().getSchema().getName();
                 case MESSAGE:
+                    System.out.println("message:"+this.getClass());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
 
                     messages = Lists.newArrayList();
