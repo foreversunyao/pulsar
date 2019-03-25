@@ -66,7 +66,7 @@ public class ParserProxyHandler {
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-
+        System.out.println(java.lang.System.identityHashCode(this));
         //MessageMetadata msgMetadata = null;
 
         try {
@@ -91,7 +91,7 @@ public class ParserProxyHandler {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
-                    System.out.println("producer"+this.getClass().hashCode());
+                    System.out.println("producer"+java.lang.System.identityHashCode(this));
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
@@ -104,21 +104,21 @@ public class ParserProxyHandler {
                     for (int i=0;i <messages.size();i++){
                         System.out.println("messageSend:"+  new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8"));
                     }
-                    System.out.println("send"+this.getClass().hashCode());
+                    System.out.println("send"+java.lang.System.identityHashCode(this));
                     break;
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
                     topicName = TopicName.get(this.topic);
-                    System.out.println("subscrbie:"+this.getClass().hashCode());
+                    System.out.println("subscrbie:"+java.lang.System.identityHashCode(this));
                     break;
                 case SUCCESS:
-                    System.out.println("success:"+this.getClass().hashCode());
+                    System.out.println("success:"+java.lang.System.identityHashCode(this));
                     info = "success:"+cmd.getSuccess().getSchema().getName();
                     break;
                 case MESSAGE:
 
-                    System.out.println("message:"+this.getClass().hashCode());
+                    System.out.println("message:"+java.lang.System.identityHashCode(this));
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName=TopicName.get(this.topic);
                     messages = Lists.newArrayList();
