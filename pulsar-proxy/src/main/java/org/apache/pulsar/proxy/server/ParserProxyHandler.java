@@ -46,7 +46,7 @@ public class ParserProxyHandler {
     private Object msg;
     private Channel channel;
     private static final int lengthFieldLength = 4;
-    private String topic="";
+    private static String topic="";
     private List<RawMessage> messages;
     private String info;
     private TopicName topicName;
@@ -55,8 +55,7 @@ public class ParserProxyHandler {
     private static int setCount=0;
 
     public ParserProxyHandler(){
-        ParserProxyHandler.count++;
-        System.out.println("#count:"+count);
+
     }
     public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
         ParserProxyHandler.setCount++;
@@ -97,12 +96,12 @@ public class ParserProxyHandler {
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
-                    this.topic=cmd.getProducer().getTopic();
+                    ParserProxyHandler.topic=cmd.getProducer().getTopic();
 
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(this.topic);
+                    topicName = TopicName.get(ParserProxyHandler.topic=);
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -127,15 +126,13 @@ public class ParserProxyHandler {
                     break;
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
-                    this.topic = cmd.getSubscribe().getTopic();
-                    topicName = TopicName.get(this.topic);
-
+                    ParserProxyHandler.topic = cmd.getSubscribe().getTopic();
                     break;
                 case MESSAGE:
 
 
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-                    topicName=TopicName.get(this.topic);
+                    topicName=TopicName.get(ParserProxyHandler.topic);
                     messages = Lists.newArrayList();
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
 
