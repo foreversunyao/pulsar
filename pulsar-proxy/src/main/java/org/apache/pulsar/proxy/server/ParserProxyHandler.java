@@ -107,6 +107,16 @@ public class ParserProxyHandler {
                     }
 
                     break;
+                case ACK:
+                    for (int i=0;i<buffer.capacity();i++)
+                    {
+                        System.out.print((char)buffer.getByte(i));
+                    }
+                case FLOW:
+                    for (int i=0;i<buffer.capacity();i++)
+                    {
+                        System.out.print((char)buffer.getByte(i));
+                    }
                 case SUBSCRIBE:
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
