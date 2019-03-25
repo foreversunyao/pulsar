@@ -110,7 +110,7 @@ public class ParserProxyHandler {
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     this.topic = cmd.getSubscribe().getTopic();
                     topicName = TopicName.get(this.topic);
-                    System.out.println("subscrbie:"+this.getClass().hashCode()));
+                    System.out.println("subscrbie:"+this.getClass().hashCode());
                     break;
                 case SUCCESS:
                     System.out.println("success:"+this.getClass().hashCode());
