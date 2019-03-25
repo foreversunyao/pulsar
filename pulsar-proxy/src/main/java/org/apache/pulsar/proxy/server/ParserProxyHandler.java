@@ -55,22 +55,24 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private PulsarApi.BaseCommand cmd = null;
     private PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
-    public ParserProxyHandler(){
-
-    }
-    public synchronized void setParserProxyHandler(ChannelHandlerContext ctx, Channel channel, Object msg, String type){
-
-        this.ctx = ctx;
+    public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
-        this.msg =msg;
         this.type=type;
-        this.parseProxyMsg();
+    }
+    public synchronized void setParserProxyHandler(Channel channel, String type){
+
+
+        this.channel = channel;
+        this.type=type;
+        //this.parseProxyMsg();
 
     }
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         System.out.println("#########here");
 
+        this.ctx = ctx;
+        this.msg = msg;
 
         this.info="";
         ByteBuf buffer = (ByteBuf)(this.msg);
