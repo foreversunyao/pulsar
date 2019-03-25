@@ -66,7 +66,6 @@ public class ParserProxyHandler {
         ByteBuf buffer = (ByteBuf)(this.msg);
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-        System.out.println(java.lang.System.identityHashCode(this));
         //MessageMetadata msgMetadata = null;
 
         try {

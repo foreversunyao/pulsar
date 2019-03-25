@@ -210,7 +210,7 @@ public class DirectProxyHandler {
             if (log.isDebugEnabled()) {
                 log.debug("[{}] [{}] Received Connected from broker", inboundChannel, outboundChannel);
             }
-            System.out.println("...BackendHandler handleconnected.. state:"+state);
+
             if (config.isTlsHostnameVerificationEnabled() && remoteHostName != null
                     && !verifyTlsHostName(remoteHostName, ctx)) {
                 // close the connection if host-verification failed with the
@@ -221,7 +221,7 @@ public class DirectProxyHandler {
             }
 
             state = BackendState.HandshakeCompleted;
-            System.out.println("...BackendHandler handleconnected.. state:"+state);
+
             inboundChannel.writeAndFlush(Commands.newConnected(connected.getProtocolVersion())).addListener(future -> {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
