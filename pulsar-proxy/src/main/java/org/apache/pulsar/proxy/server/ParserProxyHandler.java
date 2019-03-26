@@ -61,9 +61,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
 
     }
-    /*
+
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        System.out.println("#########"+ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
+        System.out.println(ParserProxyHandler.consumerHashMap.size());
+    }
+    /*
         System.out.println(ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
         //remove invalid object
         if (ParserProxyHandler.producerHashMap !=null && !ParserProxyHandler.producerHashMap.isEmpty()){
