@@ -237,7 +237,23 @@ public class DirectProxyHandler {
         }
 
         @Override
-        public void channelInactive(ChannelHandlerContext ctx) {
+        public void channelInactive(ChannelHandlerContext ctx)
+        {
+            //remove invalid object
+            if (ParserProxyHandler.producerHashTable !=null && !ParserProxyHandler.producerHashTable.isEmpty()){
+                ParserProxyHandler.producerHashTable.forEach((k, v)->{
+                    if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
+                        ParserProxyHandler.producerHashTable.remove(k);
+                    }
+                });
+            }
+            if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
+                ParserProxyHandler.consumerHashTable.forEach((k, v)->{
+                    if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
+                        ParserProxyHandler.consumerHashTable.remove(k);
+                    }
+                });
+            }
             inboundChannel.close();
         }
 

@@ -133,7 +133,21 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-
+        //remove invalid object
+        if (ParserProxyHandler.producerHashTable !=null && !ParserProxyHandler.producerHashTable.isEmpty()){
+            ParserProxyHandler.producerHashTable.forEach((k, v)->{
+                if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
+                 ParserProxyHandler.producerHashTable.remove(k);
+                }
+            });
+        }
+        if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
+            ParserProxyHandler.consumerHashTable.forEach((k, v)->{
+                if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
+                    ParserProxyHandler.consumerHashTable.remove(k);
+                }
+            });
+        }
         if (directProxyHandler != null && directProxyHandler.outboundChannel != null) {
             directProxyHandler.outboundChannel.close();
         }

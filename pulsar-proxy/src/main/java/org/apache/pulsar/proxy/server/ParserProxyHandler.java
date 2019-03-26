@@ -47,8 +47,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private String type;
     private List<RawMessage> messages = null;
     //channelid+producerid/consumerid
-    private static Map<String, String> producerHashTable = new Hashtable<>();
-    private static Map<String, String> consumerHashTable = new Hashtable<>();
+    public static Map<String, String> producerHashTable = new Hashtable<>();
+    public static Map<String, String> consumerHashTable = new Hashtable<>();
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
@@ -116,11 +116,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 case MESSAGE:
                     System.out.println("#######consumerid:"+cmd.getMessage().getConsumerId());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-
-                    //topicName=TopicName.get(this.topic);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashTable.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
                     messages = Lists.newArrayList();
-                    //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
