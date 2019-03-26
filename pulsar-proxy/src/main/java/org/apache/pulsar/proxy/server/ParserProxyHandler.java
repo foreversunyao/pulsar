@@ -33,8 +33,6 @@ import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
-
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -45,16 +43,19 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     private Channel channel;
     private static final int lengthFieldLength = 4;
+    public static final String frontendConn = "frontendconn";
+    public static final String backendConn = "backendconn";
     private String topic="";
-    private String type;
+    private String connType;
     private List<RawMessage> messages = null;
+
     //channelid+producerid/consumerid
-    public static Map<String, String> producerHashMap = new ConcurrentHashMap<>();
-    public static Map<String, String> consumerHashMap = new ConcurrentHashMap<>();
+    private static Map<String, String> producerHashMap = new ConcurrentHashMap<>();
+    private static Map<String, String> consumerHashMap = new ConcurrentHashMap<>();
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
-        this.type=type;
+        this.connType=type;
     }
 
     private void logging (PulsarApi.BaseCommand cmd, String info){
@@ -62,38 +63,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("#########"+ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
-        System.out.println(ParserProxyHandler.consumerHashMap.size());
-    }
-    /*
-        System.out.println(ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
-        //remove invalid object
-        if (ParserProxyHandler.producerHashMap !=null && !ParserProxyHandler.producerHashMap.isEmpty()){
-            System.out.println("11111111111111");
-            Iterator<String> iterator = ParserProxyHandler.producerHashMap.keySet().iterator();
-            while(iterator.hasNext()){
-                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.producerHashMap.get((((Iterator) iterator).next())).split(",")[1])){
-                    iterator.remove();
-                }
-            }
-        }
-        //remove invalid object
-        /*
-        if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
-            Iterator<String> iterator2 = ParserProxyHandler.consumerHashTable.keySet().iterator();
-            while(iterator2.hasNext()){
-                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.consumerHashTable.get((((Iterator) iterator2).next())).split(",")[1])){
-                    iterator2.remove();
-                }
-            }
-        }
-
-    }
-    */
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//TODO , if channel closed, remove producerid/consumerid under this channel
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
 
@@ -128,6 +98,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
 
                     break;
+                    /*
                 case SEND:
                     messages = Lists.newArrayList();
                     topicName = TopicName.get(ParserProxyHandler.producerHashMap.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
@@ -140,11 +111,14 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         info= info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
                     break;
+                    */
                 case SUBSCRIBE:
                     this.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     ParserProxyHandler.consumerHashMap.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
                     break;
+
+                case SEND:
                 case MESSAGE:
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
@@ -159,11 +133,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
 
             }
-            if (this.type=="proxyconn"){
-                conn = "["+ ctx.channel().remoteAddress()+"|"+ctx.channel().localAddress()+"|"+channel.localAddress()+"|"+channel.remoteAddress()+"]";
-            }
-            else if (this.type=="backendconn"){
-                conn = "["+channel.remoteAddress()+"|"+channel.localAddress()+"|"+ctx.channel().localAddress()+"|"+ctx.channel().remoteAddress()+"]";
+            switch (this.connType){
+                case ParserProxyHandler.frontendConn:
+                    conn = "["+ ctx.channel().remoteAddress()+"|"+ctx.channel().localAddress()+"|"+channel.localAddress()+"|"+channel.remoteAddress()+"]";
+                    break;
+                case ParserProxyHandler.backendConn:
+                    conn = "["+channel.remoteAddress()+"|"+channel.localAddress()+"|"+ctx.channel().localAddress()+"|"+ctx.channel().remoteAddress()+"]";
+                    break;
             }
             log.info("conn:{} cmd:{} msg:{}",conn,cmd.getType(),info);
 

@@ -229,9 +229,11 @@ public class DirectProxyHandler {
                 }
                 inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
-                inboundChannel.pipeline().addBefore("handler","inboundParser", new ParserProxyHandler(inboundChannel,"proxyconn"));
-                outboundChannel.pipeline().addBefore("proxyOutboundHandler","inboundParser", new ParserProxyHandler(outboundChannel,"backendconn"));
-               // outboundChannel.pipeline().addBefore("proxyOutboundHandler","frameEncoder", new LengthFieldPrepender(4));
+
+                // Added parser handler
+                inboundChannel.pipeline().addBefore("handler","inboundParser", new ParserProxyHandler(inboundChannel,ParserProxyHandler.frontendConn));
+                outboundChannel.pipeline().addBefore("proxyOutboundHandler","outboundParser", new ParserProxyHandler(outboundChannel,ParserProxyHandler.backendConn));
+
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
