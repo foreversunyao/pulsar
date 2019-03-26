@@ -67,7 +67,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         TopicName topicName = null;
         String info="";
         String conn ="";
-        System.out.println("######channelid:"+ctx.channel().id());
         ByteBuf buffer = (ByteBuf)(msg);
 
         //MessageMetadata msgMetadata = null;
@@ -88,6 +87,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
+            System.out.println(cmd.getType()+"######channelid:"+ctx.channel().id()+"#"+ctx.channel().remoteAddress());
             switch (cmd.getType()) {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
