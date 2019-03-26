@@ -250,7 +250,7 @@ public class DirectProxyHandler {
                         iterator.remove();
                     }
                 }
-            }*/s
+            }*/
             //remove invalid object
             if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
                 Iterator<String> iterator2 = ParserProxyHandler.consumerHashTable.keySet().iterator();
