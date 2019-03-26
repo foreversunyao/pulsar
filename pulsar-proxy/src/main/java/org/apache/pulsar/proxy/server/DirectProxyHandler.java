@@ -242,6 +242,7 @@ public class DirectProxyHandler {
         public void channelInactive(ChannelHandlerContext ctx)
         {
             //remove invalid object
+           /*
             if (ParserProxyHandler.producerHashTable !=null && !ParserProxyHandler.producerHashTable.isEmpty()){
                 Iterator<String> iterator = ParserProxyHandler.producerHashTable.keySet().iterator();
                 while(iterator.hasNext()){
@@ -249,7 +250,7 @@ public class DirectProxyHandler {
                         iterator.remove();
                     }
                 }
-            }
+            }*/s
             //remove invalid object
             if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
                 Iterator<String> iterator2 = ParserProxyHandler.consumerHashTable.keySet().iterator();

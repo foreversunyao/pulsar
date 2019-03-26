@@ -144,6 +144,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
             }
         }
         //remove invalid object
+        /*
         if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
             Iterator<String> iterator2 = ParserProxyHandler.consumerHashTable.keySet().iterator();
             while(iterator2.hasNext()){
@@ -151,7 +152,7 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
                     iterator2.remove();
                 }
             }
-        }
+        }*/
         if (directProxyHandler != null && directProxyHandler.outboundChannel != null) {
             directProxyHandler.outboundChannel.close();
         }
