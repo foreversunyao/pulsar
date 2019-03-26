@@ -49,7 +49,9 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
-import io.prometheus.client.Counter;
+
+
+import java.util.Iterator;
 
 public class DirectProxyHandler {
 
@@ -241,18 +243,21 @@ public class DirectProxyHandler {
         {
             //remove invalid object
             if (ParserProxyHandler.producerHashTable !=null && !ParserProxyHandler.producerHashTable.isEmpty()){
-                ParserProxyHandler.producerHashTable.forEach((k, v)->{
-                    if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
-                        ParserProxyHandler.producerHashTable.remove(k);
+                Iterator<String> iterator = ParserProxyHandler.producerHashTable.keySet().iterator();
+                while(iterator.hasNext()){
+                    if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.producerHashTable.get((((Iterator) iterator).next())).split(",")[1])){
+                        iterator.remove();
                     }
-                });
+                }
             }
+            //remove invalid object
             if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
-                ParserProxyHandler.consumerHashTable.forEach((k, v)->{
-                    if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
-                        ParserProxyHandler.consumerHashTable.remove(k);
+                Iterator<String> iterator = ParserProxyHandler.consumerHashTable.keySet().iterator();
+                while(iterator.hasNext()){
+                    if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.consumerHashTable.get((((Iterator) iterator).next())).split(",")[1])){
+                        iterator.remove();
                     }
-                });
+                }
             }
             inboundChannel.close();
         }

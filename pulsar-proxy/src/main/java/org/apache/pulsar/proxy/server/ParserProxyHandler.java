@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import java.util.List;
-import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 
@@ -47,8 +47,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private String type;
     private List<RawMessage> messages = null;
     //channelid+producerid/consumerid
-    public static Map<String, String> producerHashTable = new Hashtable<>();
-    public static Map<String, String> consumerHashTable = new Hashtable<>();
+    public static Map<String, String> producerHashTable = new ConcurrentHashMap<>();
+    public static Map<String, String> consumerHashTable = new ConcurrentHashMap<>();
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;

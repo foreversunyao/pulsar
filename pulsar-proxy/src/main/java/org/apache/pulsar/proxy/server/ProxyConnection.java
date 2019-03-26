@@ -21,6 +21,7 @@ package org.apache.pulsar.proxy.server;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.net.SocketAddress;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLSession;
@@ -135,18 +136,21 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
         super.channelInactive(ctx);
         //remove invalid object
         if (ParserProxyHandler.producerHashTable !=null && !ParserProxyHandler.producerHashTable.isEmpty()){
-            ParserProxyHandler.producerHashTable.forEach((k, v)->{
-                if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
-                 ParserProxyHandler.producerHashTable.remove(k);
+            Iterator<String> iterator = ParserProxyHandler.producerHashTable.keySet().iterator();
+            while(iterator.hasNext()){
+                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.producerHashTable.get((((Iterator) iterator).next())).split(",")[1])){
+                    iterator.remove();
                 }
-            });
+            }
         }
+        //remove invalid object
         if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
-            ParserProxyHandler.consumerHashTable.forEach((k, v)->{
-                if (String.valueOf(ctx.channel().id()).equals(k.split(",")[1])){
-                    ParserProxyHandler.consumerHashTable.remove(k);
+            Iterator<String> iterator = ParserProxyHandler.consumerHashTable.keySet().iterator();
+            while(iterator.hasNext()){
+                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.consumerHashTable.get((((Iterator) iterator).next())).split(",")[1])){
+                    iterator.remove();
                 }
-            });
+            }
         }
         if (directProxyHandler != null && directProxyHandler.outboundChannel != null) {
             directProxyHandler.outboundChannel.close();
