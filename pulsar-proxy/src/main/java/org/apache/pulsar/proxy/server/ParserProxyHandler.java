@@ -98,7 +98,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
 
                     break;
-                    /*
                 case SEND:
                     messages = Lists.newArrayList();
                     topicName = TopicName.get(ParserProxyHandler.producerHashMap.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
@@ -111,14 +110,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         info= info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
                     }
                     break;
-                    */
+
                 case SUBSCRIBE:
                     this.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
                     ParserProxyHandler.consumerHashMap.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
                     break;
 
-                case SEND:
                 case MESSAGE:
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
