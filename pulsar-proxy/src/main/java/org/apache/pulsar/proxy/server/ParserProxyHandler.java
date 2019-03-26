@@ -96,7 +96,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     break;
                 case SEND:
-                    System.out.println("#######producerid:"+cmd.getProducer().getProducerId());
                     messages = Lists.newArrayList();
                     topicName = TopicName.get(ParserProxyHandler.producerHashTable.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
 
@@ -114,7 +113,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     ParserProxyHandler.consumerHashTable.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
                     break;
                 case MESSAGE:
-                    System.out.println("#######consumerid:"+cmd.getMessage().getConsumerId());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashTable.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
                     messages = Lists.newArrayList();
