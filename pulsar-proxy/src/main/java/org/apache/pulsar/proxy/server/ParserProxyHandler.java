@@ -33,6 +33,8 @@ import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -47,8 +49,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private String type;
     private List<RawMessage> messages = null;
     //channelid+producerid/consumerid
-    public static Map<String, String> producerHashTable = new ConcurrentHashMap<>();
-    public static Map<String, String> consumerHashTable = new ConcurrentHashMap<>();
+    public static Map<String, String> producerHashMap = new ConcurrentHashMap<>();
+    public static Map<String, String> consumerHashMap = new ConcurrentHashMap<>();
 
     public ParserProxyHandler(Channel channel, String type){
         this.channel = channel;
@@ -57,6 +59,30 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     private void logging (PulsarApi.BaseCommand cmd, String info){
 
+
+    }
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) {
+        System.out.println(ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
+        //remove invalid object
+        if (ParserProxyHandler.producerHashMap !=null && !ParserProxyHandler.producerHashMap.isEmpty()){
+            Iterator<String> iterator = ParserProxyHandler.producerHashMap.keySet().iterator();
+            while(iterator.hasNext()){
+                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.producerHashMap.get((((Iterator) iterator).next())).split(",")[1])){
+                    iterator.remove();
+                }
+            }
+        }
+        //remove invalid object
+        /*
+        if (ParserProxyHandler.consumerHashTable !=null && !ParserProxyHandler.consumerHashTable.isEmpty()){
+            Iterator<String> iterator2 = ParserProxyHandler.consumerHashTable.keySet().iterator();
+            while(iterator2.hasNext()){
+                if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.consumerHashTable.get((((Iterator) iterator2).next())).split(",")[1])){
+                    iterator2.remove();
+                }
+            }
+        }*/
 
     }
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -92,12 +118,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 case PRODUCER:
                     info = " {producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}";
                     this.topic=cmd.getProducer().getTopic();
-                    ParserProxyHandler.producerHashTable.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
+                    ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
 
                     break;
                 case SEND:
                     messages = Lists.newArrayList();
-                    topicName = TopicName.get(ParserProxyHandler.producerHashTable.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
+                    topicName = TopicName.get(ParserProxyHandler.producerHashMap.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
 
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -110,11 +136,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 case SUBSCRIBE:
                     this.topic = cmd.getSubscribe().getTopic();
                     info = "{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}";
-                    ParserProxyHandler.consumerHashTable.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
+                    ParserProxyHandler.consumerHashMap.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
                     break;
                 case MESSAGE:
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-                    topicName = TopicName.get(ParserProxyHandler.consumerHashTable.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
+                    topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
                     messages = Lists.newArrayList();
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
