@@ -61,11 +61,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
 
     }
+    /*
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         System.out.println(ctx.channel().localAddress()+"#ss"+ctx.channel().remoteAddress());
         //remove invalid object
         if (ParserProxyHandler.producerHashMap !=null && !ParserProxyHandler.producerHashMap.isEmpty()){
+            System.out.println("11111111111111");
             Iterator<String> iterator = ParserProxyHandler.producerHashMap.keySet().iterator();
             while(iterator.hasNext()){
                 if (String.valueOf(ctx.channel().id()).equals(ParserProxyHandler.producerHashMap.get((((Iterator) iterator).next())).split(",")[1])){
@@ -82,9 +84,10 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     iterator2.remove();
                 }
             }
-        }*/
+        }
 
     }
+    */
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 //TODO , if channel closed, remove producerid/consumerid under this channel
         PulsarApi.BaseCommand cmd = null;
