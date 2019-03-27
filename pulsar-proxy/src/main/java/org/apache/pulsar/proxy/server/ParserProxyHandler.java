@@ -60,9 +60,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
     private void logging (Channel conn,PulsarApi.BaseCommand.Type cmdtype,String info,List<RawMessage> messages) throws Exception{
         String connString="";
+
         if (messages !=null){
+            Long timeCost;
             for (int i=0;i <messages.size();i++){
-                info= info + new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
+                timeCost = System.currentTimeMillis() - messages.get(i).getPublishTime();
+                info = info + "[timeCost:"+timeCost+"] "+new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
             }
         }
 
