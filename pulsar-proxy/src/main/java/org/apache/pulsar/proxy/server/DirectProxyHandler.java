@@ -52,6 +52,9 @@ import io.netty.util.concurrent.FutureListener;
 
 
 import java.util.Iterator;
+import java.util.Map;
+import io.netty.channel.ChannelId;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DirectProxyHandler {
 
@@ -62,7 +65,7 @@ public class DirectProxyHandler {
     private String clientAuthMethod;
     private int protocolVersion;
     public static final String TLS_HANDLER = "tls";
-
+    public static Map<ChannelId, ChannelId> inboundOutboundChannelMap = new ConcurrentHashMap<>();
     private final Authentication authentication;
     private final SslContext sslCtx;
 
@@ -122,6 +125,8 @@ public class DirectProxyHandler {
                     .get("proxyOutboundHandler");
 
             cnx.setRemoteHostName(targetBroker.getHost());
+            inboundOutboundChannelMap.put(outboundChannel.id(),inboundChannel.id());
+
         });
     }
 

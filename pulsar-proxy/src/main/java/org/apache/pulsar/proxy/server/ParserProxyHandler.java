@@ -133,7 +133,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     System.out.println("####MESSAGE"+ctx.channel().id()+"#"+ctx.pipeline().channel().id());
                     //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
                     //topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
-                    topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
+                    topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
+                    //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
                                 messages.add(message);
