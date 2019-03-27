@@ -49,7 +49,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     private String connType;
 
 
-    //channelid+producerid/consumerid
+    //producerid/consumerid+channelid as key
     private static Map<String, String> producerHashMap = new ConcurrentHashMap<>();
     private static Map<String, String> consumerHashMap = new ConcurrentHashMap<>();
 
