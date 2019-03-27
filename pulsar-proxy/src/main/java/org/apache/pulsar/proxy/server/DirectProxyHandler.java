@@ -126,6 +126,7 @@ public class DirectProxyHandler {
 
             cnx.setRemoteHostName(targetBroker.getHost());
             inboundOutboundChannelMap.put(outboundChannel.id(),inboundChannel.id());
+            System.out.println("outbound:"+outboundChannel.id().toString()+"#inbound:"+inboundChannel.id().toString());
 
         });
     }

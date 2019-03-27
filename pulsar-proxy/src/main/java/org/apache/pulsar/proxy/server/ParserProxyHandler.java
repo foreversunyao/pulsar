@@ -104,7 +104,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            //System.out.println(cmd.getType()+"######channelid:"+ctx.channel().id()+"#"+ctx.channel().remoteAddress());
             switch (cmd.getType()) {
                 case PRODUCER:
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
@@ -130,9 +129,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
 
                 case MESSAGE:
-                    System.out.println("####MESSAGE"+ctx.channel().id()+"#"+ctx.pipeline().channel().id());
-                    //MessageMetadata msgMetadata = Commands.parseMessageMetadata(buffer);
-                    //topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+String.valueOf(ctx.channel().id())));
+                    System.out.print("messagechannel:"+ctx.channel().id());
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
