@@ -65,7 +65,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             Long timeCost;
             for (int i=0;i <messages.size();i++){
                 timeCost = System.currentTimeMillis() - messages.get(i).getPublishTime();
-                info = info + "[timeCost:"+timeCost+"] "+new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
+                info = info + "["+timeCost+"] "+new String(ByteBufUtil.getBytes((messages.get(i)).getData()),"UTF8");
             }
         }
 
