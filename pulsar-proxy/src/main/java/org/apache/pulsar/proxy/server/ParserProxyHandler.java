@@ -104,7 +104,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println(cmd.getType()+"######channelid:"+ctx.channel().id()+"#"+ctx.channel().remoteAddress());
+            //System.out.println(cmd.getType()+"######channelid:"+ctx.channel().id()+"#"+ctx.channel().remoteAddress());
             switch (cmd.getType()) {
                 case PRODUCER:
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
@@ -139,6 +139,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     logging(ctx.channel(),cmd.getType(),"",messages);
                     break;
 
+                    default:
+                    logging(ctx.channel(),cmd.getType(),"",null);
+                    break;
             }
 
 
