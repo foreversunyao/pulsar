@@ -200,7 +200,6 @@ public class ProxyConnection extends PulsarHandler implements FutureListener<Voi
      */
     @Override
     protected void handleConnect(CommandConnect connect) {
-        System.out.println("...handlerConnect,state:"+state);
         checkArgument(state == State.Init);
         remoteEndpointProtocolVersion = connect.getProtocolVersion();
         if (LOG.isDebugEnabled()) {

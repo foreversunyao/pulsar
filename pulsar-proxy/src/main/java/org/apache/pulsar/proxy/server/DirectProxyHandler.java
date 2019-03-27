@@ -82,7 +82,7 @@ public class DirectProxyHandler {
         this.sslCtx = sslCtx;
         ProxyConfiguration config = service.getConfiguration();
 
-        System.out.println("...outboundchannel init.. ");
+
         // Start the connection attempt.
         Bootstrap b = new Bootstrap();
         // Tie the backend connection on the same thread to avoid context
@@ -126,7 +126,7 @@ public class DirectProxyHandler {
 
             cnx.setRemoteHostName(targetBroker.getHost());
             inboundOutboundChannelMap.put(outboundChannel.id(),inboundChannel.id());
-            System.out.println("outbound:"+outboundChannel.id().toString()+"#inbound:"+inboundChannel.id().toString());
+
 
         });
     }

@@ -84,7 +84,6 @@ public class ServiceChannelInitializer extends ChannelInitializer<SocketChannel>
                 ch.pipeline().addLast(TLS_HANDLER, sslContext.newHandler(ch.alloc()));
             }
         }
-        System.out.println("1, Proxy init inbound channel:"+ch.localAddress()+"#"+ch.remoteAddress());
         ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4));
         ch.pipeline().addLast("handler",
                 new ProxyConnection(proxyService, clientSslCtxRefresher == null ? null : clientSslCtxRefresher.get()));

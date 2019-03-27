@@ -122,14 +122,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
 
                 case SUBSCRIBE:
-                    System.out.println("####SUB"+ctx.channel().id()+"#"+ctx.pipeline().channel().id());
                     ParserProxyHandler.consumerHashMap.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
 
                     logging(ctx.channel(),cmd.getType(),"{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}",null);
                     break;
 
                 case MESSAGE:
-                    System.out.print("messagechannel:"+ctx.channel().id());
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     //topicName = TopicName.get("persistent://proxy-tenant/proxy-namespace/proxy-v0");
                     MessageParser.parseMessage(topicName,  -1L,
