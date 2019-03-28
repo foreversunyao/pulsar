@@ -148,6 +148,15 @@ public class ProxyConfiguration implements PulsarConfiguration {
         doc = "Path for the file used to determine the rotation status for the proxy instance"
             + " when responding to service discovery health checks"
     )
+    private Integer proxyLogLevel = 0;
+
+    @FieldContext(
+            category = CATEGORY_SERVER,
+            doc = "Proxy log level, default is 0."
+                    + " 0 means do not log any tcp channel info"
+                    + " 1 means log any tcp channel info and command info without real messages"
+                    + " 2 means log channel info, command info and real messages"
+    )
     private String statusFilePath;
 
     @FieldContext(
@@ -339,6 +348,10 @@ public class ProxyConfiguration implements PulsarConfiguration {
 
     public Optional<Integer> getServicePort() {
         return Optional.ofNullable(servicePort);
+    }
+
+    public Optional<Integer> getproxyLogLevel() {
+        return Optional.ofNullable(proxyLogLevel);
     }
 
     public Optional<Integer> getServicePortTls() {
