@@ -96,7 +96,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-            //buffer.skipBytes(ParserProxyHandler.lengthFieldLength);
+            buffer.skipBytes(ParserProxyHandler.lengthFieldLength);
             //buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
@@ -114,6 +114,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
 
                     logging(ctx.channel(),cmd.getType(),"{producer:"+cmd.getProducer().getProducerName()+",topic:"+cmd.getProducer().getTopic()+"}",null);
+                    cmd.getProducer().recycle();
                     break;
 
                 case SEND:
@@ -135,12 +136,14 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                             });
 
                     logging(ctx.channel(),cmd.getType(),"",messages);
+                    cmd.getSend().recycle();
                     break;
 
                 case SUBSCRIBE:
                     ParserProxyHandler.consumerHashMap.put(String.valueOf(cmd.getSubscribe().getConsumerId())+","+String.valueOf(ctx.channel().id()),cmd.getSubscribe().getTopic());
 
                     logging(ctx.channel(),cmd.getType(),"{consumer:"+cmd.getSubscribe().getConsumerName()+",topic:"+cmd.getSubscribe().getTopic()+"}",null);
+                    cmd.getSubscribe().recycle();
                     break;
 
                 case MESSAGE:
@@ -162,6 +165,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                             });
 
                     logging(ctx.channel(),cmd.getType(),"",messages);
+                    cmd.getMessage().recycle();
                     break;
 
                     default:
@@ -179,8 +183,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             if (cmd != null) {
                 cmd.recycle();
             }
-            buffer.resetReaderIndex();
-            buffer.resetWriterIndex();
+            //buffer.resetReaderIndex();
+            //buffer.resetWriterIndex();
+            buffer.release();
         }
         ctx.fireChannelRead(msg);
     }
