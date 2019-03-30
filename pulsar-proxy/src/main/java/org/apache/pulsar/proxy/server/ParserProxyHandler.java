@@ -139,6 +139,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
+                    for (int i=0;i<buffer.capacity();i++){
+
+                        System.out.print(buffer.getByte(i));
+                    }
+                    System.out.println();
+                    System.out.print(new String(ByteBufUtil.getBytes(buffer),"UTF8"));
+                    System.out.println();
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
