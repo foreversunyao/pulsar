@@ -92,6 +92,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         //MessageMetadata msgMetadata = null;
         try {
             System.out.print("init    "+new String(ByteBufUtil.getBytes(buffer),"UTF8"));
+            System.out.println("block....");
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
