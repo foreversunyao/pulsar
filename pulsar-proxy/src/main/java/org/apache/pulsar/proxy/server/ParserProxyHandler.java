@@ -161,7 +161,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     }
                     for (int i=0;i<buffer.capacity();i++){
 
-                        System.out.print((char)buffer.getByte(i));
+                        System.out.print(buffer.getByte(i));
                     }
                     System.out.println();
 
