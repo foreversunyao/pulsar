@@ -96,7 +96,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-            buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            buffer.skipBytes(ParserProxyHandler.lengthFieldLength);
+            //buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
