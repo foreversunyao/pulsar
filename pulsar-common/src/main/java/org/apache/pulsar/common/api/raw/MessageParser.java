@@ -23,9 +23,11 @@ import static org.apache.pulsar.common.api.Commands.hasChecksum;
 import static org.apache.pulsar.common.api.Commands.readChecksum;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.util.ReferenceCountUtil;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -99,10 +101,11 @@ public class MessageParser {
         }
     }
 
-    public static boolean verifyChecksum(TopicName topic, ByteBuf headersAndPayload, long ledgerId, long entryId) {
+    public static boolean verifyChecksum(TopicName topic, ByteBuf headersAndPayload, long ledgerId, long entryId) throws UnsupportedEncodingException {
         if (hasChecksum(headersAndPayload)) {
             int checksum = readChecksum(headersAndPayload);
             int computedChecksum = computeChecksum(headersAndPayload);
+            System.out.println("verifyChecksum: "+new String(ByteBufUtil.getBytes(headersAndPayload),"UTF8")+"#"+checksum+"#"+computedChecksum);
             if (checksum != computedChecksum) {
                 log.error(
                         "[{}] Checksum mismatch for message at {}:{}. Received checksum: 0x{}, Computed checksum: 0x{}",
