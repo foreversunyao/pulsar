@@ -187,7 +187,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetWriterIndex();
             buffer.release();
         }
-        //ctx.fireChannelRead(msg);
+        ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
