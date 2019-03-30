@@ -185,7 +185,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
-            buffer.release();
         }
         ctx.fireChannelRead(msg);
     }
