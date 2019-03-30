@@ -183,11 +183,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             if (cmd != null) {
                 cmd.recycle();
             }
-            //buffer.resetReaderIndex();
-            //buffer.resetWriterIndex();
+            buffer.resetReaderIndex();
+            buffer.resetWriterIndex();
             buffer.release();
         }
-        ctx.fireChannelRead(msg);
+        //ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
