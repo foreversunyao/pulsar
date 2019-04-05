@@ -167,6 +167,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
+                System.out.println("Messages................"+cmd.getMessage().getMessageId());
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
