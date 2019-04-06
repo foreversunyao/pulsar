@@ -335,6 +335,10 @@ public class Commands {
      */
     public static int readChecksum(ByteBuf buffer) {
         buffer.skipBytes(2); //skip magic bytes
+        System.out.println("readChecksum..............");
+        for (int i=0;i<4;i++){
+            System.out.print(String.format("%02X ", buffer.getByte(i)));
+        }
         return buffer.readInt();
     }
 

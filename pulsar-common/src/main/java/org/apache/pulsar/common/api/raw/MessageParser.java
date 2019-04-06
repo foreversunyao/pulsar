@@ -19,9 +19,14 @@
 package org.apache.pulsar.common.api.raw;
 
 import static com.scurrilous.circe.checksum.Crc32cIntChecksum.computeChecksum;
+import static com.scurrilous.circe.params.CrcParameters.CRC32C;
 import static org.apache.pulsar.common.api.Commands.hasChecksum;
 import static org.apache.pulsar.common.api.Commands.readChecksum;
 
+import com.scurrilous.circe.IncrementalIntHash;
+import com.scurrilous.circe.checksum.Crc32cSse42Provider;
+import com.scurrilous.circe.crc.Sse42Crc32C;
+import com.scurrilous.circe.crc.StandardCrcProvider;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.util.ReferenceCountUtil;
@@ -47,6 +52,17 @@ public class MessageParser {
         void process(RawMessage message);
     }
 
+    final static IncrementalIntHash CRC32C_HASH;
+
+    static {
+        if (Sse42Crc32C.isSupported()) {
+            CRC32C_HASH = new Crc32cSse42Provider().getIncrementalInt(CRC32C);
+            //log.info("SSE4.2 CRC32C provider initialized");
+        } else {
+            CRC32C_HASH = new StandardCrcProvider().getIncrementalInt(CRC32C);
+            //log.warn("Failed to load Circe JNI library. Falling back to Java based CRC32c provider");
+        }
+    }
     /**
      * Parse a raw Pulsar entry payload and extract all the individual message that may be included in the batch. The
      * provided {@link MessageProcessor} will be invoked for each individual message.
@@ -102,8 +118,20 @@ public class MessageParser {
     }
 
     public static boolean verifyChecksum(TopicName topic, ByteBuf headersAndPayload, long ledgerId, long entryId) throws UnsupportedEncodingException {
+
         if (hasChecksum(headersAndPayload)) {
             int checksum = readChecksum(headersAndPayload);
+            if (headersAndPayload.hasMemoryAddress() && (CRC32C_HASH instanceof Sse42Crc32C)) {
+                System.out.println("1.......");
+                CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes());
+            } else if (headersAndPayload.hasArray()) {
+                System.out.println("2.......");
+                CRC32C_HASH.calculate(headersAndPayload.array(), headersAndPayload.arrayOffset() + headersAndPayload.readerIndex(),
+                        headersAndPayload.readableBytes());
+            } else {
+                System.out.println("3.......");
+                CRC32C_HASH.calculate(headersAndPayload.nioBuffer());
+            }
             int computedChecksum = computeChecksum(headersAndPayload);
             System.out.println("verifyChecksum: "+new String(ByteBufUtil.getBytes(headersAndPayload),"UTF8")+"#"+checksum+"#"+computedChecksum);
             if (checksum != computedChecksum) {
