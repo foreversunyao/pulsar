@@ -93,10 +93,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         try {
             System.out.print("init    "+new String(ByteBufUtil.getBytes(buffer),"UTF8"));
             System.out.println("");
+            /**
             for (int i=0;i<buffer.capacity();i++){
 
                 System.out.print((char)buffer.getByte(i));
-            }
+            }**/
             System.out.println("");
             System.out.println("block....");
             //
@@ -159,6 +160,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
+                    System.out.println("message..............");
+                    System.out.println(ByteBufUtil.getBytes(buffer));
+
                     for (int i=0;i<buffer.capacity();i++){
 
                         System.out.print(buffer.getByte(i));
