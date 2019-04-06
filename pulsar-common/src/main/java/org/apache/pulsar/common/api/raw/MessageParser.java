@@ -127,7 +127,7 @@ public class MessageParser {
                 System.out.println(headersAndPayload.memoryAddress()+" "+headersAndPayload.readerIndex()+" "+headersAndPayload.readableBytes());
 
                 CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes());
-                System.out.println(CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes()););
+                System.out.println(CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes()));
             } else if (headersAndPayload.hasArray()) {
                 System.out.println("2.......");
                 CRC32C_HASH.calculate(headersAndPayload.array(), headersAndPayload.arrayOffset() + headersAndPayload.readerIndex(),
