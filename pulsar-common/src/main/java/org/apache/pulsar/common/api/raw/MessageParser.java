@@ -122,8 +122,12 @@ public class MessageParser {
         if (hasChecksum(headersAndPayload)) {
             int checksum = readChecksum(headersAndPayload);
             if (headersAndPayload.hasMemoryAddress() && (CRC32C_HASH instanceof Sse42Crc32C)) {
+                System.out.println("");
                 System.out.println("1.......");
+                System.out.println(headersAndPayload.memoryAddress()+" "+headersAndPayload.readerIndex()+" "+headersAndPayload.readableBytes());
+
                 CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes());
+                System.out.println(CRC32C_HASH.calculate(headersAndPayload.memoryAddress() + headersAndPayload.readerIndex(), headersAndPayload.readableBytes()););
             } else if (headersAndPayload.hasArray()) {
                 System.out.println("2.......");
                 CRC32C_HASH.calculate(headersAndPayload.array(), headersAndPayload.arrayOffset() + headersAndPayload.readerIndex(),
