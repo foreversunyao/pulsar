@@ -36,7 +36,7 @@ import io.netty.channel.Channel;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
-
+import org.apache.commons.codec.binary.Hex;
 
 public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
@@ -161,12 +161,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         break;
                     }
                     System.out.println("message..............");
-                    System.out.println(ByteBufUtil.getBytes(buffer));
+                    System.out.println(ByteBufUtil.hexDump(buffer));
 
                     for (int i=0;i<buffer.capacity();i++){
-
-                        System.out.print(buffer.getByte(i));
+                        System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
+
                     System.out.println();
 
                     System.out.print(new String(ByteBufUtil.getBytes(buffer),"UTF8"));
