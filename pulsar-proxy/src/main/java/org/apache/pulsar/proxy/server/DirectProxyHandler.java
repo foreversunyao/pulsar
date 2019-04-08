@@ -22,6 +22,8 @@ package org.apache.pulsar.proxy.server;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.net.ssl.SSLSession;
 
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
@@ -47,12 +49,13 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
-import io.prometheus.client.Counter;
+import io.netty.channel.ChannelId;
 
 public class DirectProxyHandler {
 
     private Channel inboundChannel;
     Channel outboundChannel;
+    public static Map<ChannelId, ChannelId> inboundOutboundChannelMap = new ConcurrentHashMap<>();
     private String originalPrincipal;
     private String clientAuthData;
     private String clientAuthMethod;
@@ -114,6 +117,14 @@ public class DirectProxyHandler {
             final ProxyBackendHandler cnx = (ProxyBackendHandler) outboundChannel.pipeline()
                     .get("proxyOutboundHandler");
             cnx.setRemoteHostName(targetBroker.getHost());
+
+            //enable full parsing logic for proxyLogLevel(==2)
+            if (ProxyService.proxylogLevel == 2) {
+                //Set a map between inbound and outbound, for ParserProxyHandler
+                inboundOutboundChannelMap.put(outboundChannel.id(), inboundChannel.id());
+            }
+
+
         });
     }
 
@@ -218,6 +229,12 @@ public class DirectProxyHandler {
                 inboundChannel.pipeline().remove("frameDecoder");
                 outboundChannel.pipeline().remove("frameDecoder");
 
+                //Enable parsing logic for proxyLogLevel(==1 or 2)
+                if (ProxyService.proxylogLevel == 1 || ProxyService.proxylogLevel == 2) {
+                    // Added parser handler
+                    inboundChannel.pipeline().addBefore("handler", "inboundParser", new ParserProxyHandler(inboundChannel, ParserProxyHandler.frontendConn));
+                    outboundChannel.pipeline().addBefore("proxyOutboundHandler", "outboundParser", new ParserProxyHandler(outboundChannel, ParserProxyHandler.backendConn));
+                }
                 // Start reading from both connections
                 inboundChannel.read();
                 outboundChannel.read();
