@@ -120,11 +120,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
             System.out.println("0.3 reader index..."+buffer.readerIndex());
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             System.out.println("0.4 reader index..."+buffer.readerIndex());
+            cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
+            System.out.println("0.5 reader index..."+buffer.readerIndex());
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println("0.5 reader index..."+buffer.readerIndex());
+
 
 
             switch (cmd.getType()) {
