@@ -166,6 +166,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     int msgSize;
                     while(bufferMsg.readableBytes()>0){
                         msgSize = (int) bufferMsg.readUnsignedInt();
+                        System.out.println("msgSize..........."+msgSize);
+                        System.out.println("readerIndex..........."+(bufferMsg.readerIndex()-4));
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize),(message) -> {
                                     messages.add(message);
