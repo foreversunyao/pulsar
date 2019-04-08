@@ -164,7 +164,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     System.out.println("");
                     ByteBuf bufferMsg = buffer;
                     int msgSize;
-                   for(int i=0;i<bufferMsg.readableBytes();) {
+                   for(int i=0;i<bufferMsg.readableBytes();i++) {
                         System.out.print(String.format("%02X ", bufferMsg.getByte(i)));
                         System.out.println("");
                         msgSize = (int) bufferMsg.readUnsignedInt();
@@ -178,7 +178,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                     messages.add(message);
                                 });
                          **/
-                        bufferMsg.skipBytes(msgSize);
+                        //bufferMsg.skipBytes(msgSize);
                         logging(ctx.channel(),cmd.getType(),"",messages);
                     }
                     cmd.getMessage().recycle();
