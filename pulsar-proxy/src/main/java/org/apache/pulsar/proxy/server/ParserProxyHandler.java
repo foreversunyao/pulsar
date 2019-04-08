@@ -215,13 +215,13 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         msgSize = buffer.readInt();
                         bufferSubMsg = buffer.copy(buffer.readerIndex()-4,buffer.readerIndex()+msgSize);
                         System.out.println(buffer.readerIndex()-4+"#"+buffer.readerIndex()+"#"+msgSize+"#"+buffer.readableBytes()+"#"+buffer.writerIndex());
-                        System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex())+" "+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
-                        bufferSubMsg.skipBytes(lastReaderIndex);
 
+                        bufferSubMsg.skipBytes(lastReaderIndex);
+                        System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex())+" "+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         bufferSubMsg.skipBytes(4);
                         cmdMsgSize=bufferSubMsg.readInt();
                         bufferSubMsg.skipBytes(cmdMsgSize);
-                        System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdSize+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
+                        System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdMsgSize+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
