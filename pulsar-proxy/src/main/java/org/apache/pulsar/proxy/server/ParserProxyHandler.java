@@ -196,6 +196,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 messages.add(message);
                             });
 
+                    System.out.println("readablebytes........."+bufferSubMsg.readableBytes());
+
                     /**
                     while(buffer.readableBytes()>0){
                         msgSize = buffer.readInt();
@@ -215,6 +217,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         buffer.skipBytes(msgSize-4);
                     }
                      **/
+                    logging(ctx.channel(),cmd.getType(),"",messages);
                     cmd.getMessage().recycle();
                     break;
 
