@@ -161,13 +161,16 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
-
+                    System.out.println("");
                     ByteBuf bufferMsg = buffer;
                     int msgSize;
-                    while(bufferMsg.readableBytes()>0){
+                   for(int i=0;i<bufferMsg.readableBytes();) {
+                        System.out.print(String.format("%02X ", bufferMsg.getByte(i)));
+                        System.out.println("");
                         msgSize = (int) bufferMsg.readUnsignedInt();
                         System.out.println("msgSize..........."+msgSize);
                         System.out.println("readerIndex..........."+(bufferMsg.readerIndex()-4));
+                        topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize),(message) -> {
                                     messages.add(message);
