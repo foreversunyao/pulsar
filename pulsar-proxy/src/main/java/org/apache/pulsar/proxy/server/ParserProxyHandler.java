@@ -108,8 +108,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             //skip lengthFieldLength
             buffer.skipBytes(ParserProxyHandler.lengthFieldLength);
             //buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            System.out.println("0.1 reader index..."+buffer.readerIndex());
+
 
             int cmdSize = (int) buffer.readUnsignedInt();
+            System.out.println("0.2 reader index..."+buffer.readerIndex());
+
             int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
@@ -118,6 +122,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
+            System.out.println("0.3 reader index..."+buffer.readerIndex());
+
 
             switch (cmd.getType()) {
                 case PRODUCER:
