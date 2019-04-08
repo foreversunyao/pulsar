@@ -122,7 +122,7 @@ public class MessageParser {
 
         if (hasChecksum(headersAndPayload)) {
             int checksum = readChecksum(headersAndPayload);
-            /**
+
             if (headersAndPayload.hasMemoryAddress() && (CRC32C_HASH instanceof Sse42Crc32C)) {
                 System.out.println("");
                 System.out.println("1.......");
@@ -138,7 +138,7 @@ public class MessageParser {
                 System.out.println("3.......");
                 CRC32C_HASH.calculate(headersAndPayload.nioBuffer());
             }
-             **/
+
             int computedChecksum = computeChecksum(headersAndPayload);
             System.out.println("verifyChecksum: "+new String(ByteBufUtil.getBytes(headersAndPayload),"UTF8")+"#"+checksum+"#"+computedChecksum);
             if (checksum != computedChecksum) {
