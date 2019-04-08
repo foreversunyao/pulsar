@@ -167,30 +167,31 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
-                    ByteBuf bufferMsg = buffer;
+
                     int msgSize;
                     int cmdMsgSize;
-                    bufferMsg.resetReaderIndex();
+                    buffer.resetReaderIndex();
 
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
-                    for(int i=0;i<bufferMsg.readableBytes();i++) {
-                        System.out.print(String.format("%02X ", bufferMsg.getByte(i)));
+                    for(int i=0;i<buffer.readableBytes();i++) {
+                        System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
-                    bufferMsg.resetReaderIndex();
-                    while(bufferMsg.readableBytes()>0){
-                        msgSize = bufferMsg.readInt();
+                    buffer.resetReaderIndex();
+                    while(buffer.readableBytes()>0){
+                        msgSize = buffer.readInt();
                         System.out.println("msgSize..........."+msgSize);
-                        System.out.println("readerIndex..........."+(bufferMsg.readerIndex()));
-                        ByteBuf bufferSubMsg = bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()-4+msgSize);
-                        cmdMsgSize=bufferMsg.readInt();
-                        bufferMsg.skipBytes(cmdMsgSize);
-                        System.out.println("readerIndex 2 ..........."+(bufferMsg.readerIndex()));
+                        System.out.println("readerIndex..........."+(buffer.readerIndex()));
+                        ByteBuf bufferSubMsg = buffer.slice(buffer.readerIndex()-4,buffer.readerIndex()-4+msgSize);
+                        System.out.println("bufferSubMsg readerindex....."+bufferSubMsg.readerIndex());
+                        cmdMsgSize=bufferSubMsg.readInt();
+                        bufferSubMsg.skipBytes(cmdMsgSize);
+                        System.out.println("readerIndex 2 ..........."+(buffer.readerIndex()));
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
                                 });
                         logging(ctx.channel(),cmd.getType(),"",messages);
-
+                        buffer.skipBytes(msgSize-4);
                     }
                     cmd.getMessage().recycle();
                     break;
