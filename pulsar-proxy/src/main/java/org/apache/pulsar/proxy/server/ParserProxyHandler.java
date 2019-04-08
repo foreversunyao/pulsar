@@ -108,21 +108,17 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             //skip lengthFieldLength
             buffer.skipBytes(ParserProxyHandler.lengthFieldLength);
             //buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
-            System.out.println("0.1 reader index..."+buffer.readerIndex());
-
 
             int cmdSize = (int) buffer.readUnsignedInt();
-            System.out.println("0.2 reader index..."+buffer.readerIndex());
 
             int writerIndex = buffer.writerIndex();
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
 
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
-            System.out.println("0.3 reader index..."+buffer.readerIndex());
             cmdBuilder = PulsarApi.BaseCommand.newBuilder();
-            System.out.println("0.4 reader index..."+buffer.readerIndex());
+
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
-            System.out.println("0.5 reader index..."+buffer.readerIndex());
+
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
 
@@ -171,34 +167,29 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
-                    System.out.println("");
                     ByteBuf bufferMsg = buffer;
                     int msgSize;
+                    int cmdMsgSize;
 
-                    int readerindex= bufferMsg.readerIndex();
-                    System.out.println("1.reader index..."+bufferMsg.readerIndex());
-                    bufferMsg.resetReaderIndex();
-                    System.out.println("reader index..."+bufferMsg.readerIndex());
+
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     for(int i=0;i<bufferMsg.readableBytes();i++) {
                         System.out.print(String.format("%02X ", bufferMsg.getByte(i)));
                     }
-                   for(int i=0;i<bufferMsg.readableBytes();i++) {
-                        System.out.println("");
+                    bufferMsg.resetReaderIndex();
+                    while(bufferMsg.readableBytes()>0){
                         msgSize = bufferMsg.readInt();
                         System.out.println("msgSize..........."+msgSize);
-                        System.out.println("readerIndex..........."+(bufferMsg.readerIndex()-4));
+                        System.out.println("readerIndex..........."+(bufferMsg.readerIndex()));
                         ByteBuf bufferSubMsg = bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize);
-                        bufferSubMsg.skipBytes(31);
-
-                        System.out.println("sub readerIndex..........."+(bufferSubMsg.readerIndex()));
+                        cmdMsgSize=bufferMsg.readInt();
+                        bufferMsg.skipBytes(cmdMsgSize);
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
                                 });
-
-                        bufferMsg.skipBytes(msgSize);
                         logging(ctx.channel(),cmd.getType(),"",messages);
+
                     }
                     cmd.getMessage().recycle();
                     break;
