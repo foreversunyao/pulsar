@@ -181,7 +181,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         msgSize = bufferMsg.readInt();
                         System.out.println("msgSize..........."+msgSize);
                         System.out.println("readerIndex..........."+(bufferMsg.readerIndex()));
-                        ByteBuf bufferSubMsg = bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize);
+                        ByteBuf bufferSubMsg = bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()-4+msgSize);
                         cmdMsgSize=bufferMsg.readInt();
                         bufferMsg.skipBytes(cmdMsgSize);
                         System.out.println("readerIndex 2 ..........."+(bufferMsg.readerIndex()));
