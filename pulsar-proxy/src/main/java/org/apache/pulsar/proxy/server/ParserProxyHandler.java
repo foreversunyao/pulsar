@@ -222,7 +222,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",messages);
                         buffer.skipBytes(msgSize);
                         System.out.println("buffer readerindex and ........"+buffer.readerIndex()+"#"+buffer.readableBytes());
-                        bufferSubMsg.resetReaderIndex();
                     }
 
                     //logging(ctx.channel(),cmd.getType(),"",messages);
