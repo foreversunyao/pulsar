@@ -170,7 +170,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     int msgSize;
                     int cmdMsgSize;
-                    ByteBuf bufferSubMsg = buffer;
+
 
 
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
