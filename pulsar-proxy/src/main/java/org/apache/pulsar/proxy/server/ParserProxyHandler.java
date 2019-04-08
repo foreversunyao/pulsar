@@ -164,8 +164,10 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     System.out.println("");
                     ByteBuf bufferMsg = buffer;
                     int msgSize;
+                    int readerindex= bufferMsg.readerIndex();
                     bufferMsg.resetReaderIndex();
                     System.out.println("reader index..."+bufferMsg.readerIndex());
+                    topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     for(int i=0;i<bufferMsg.readableBytes();i++) {
                         System.out.print(String.format("%02X ", bufferMsg.getByte(i)));
                     }
@@ -174,10 +176,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         msgSize = bufferMsg.readInt();
                         System.out.println("msgSize..........."+msgSize);
                         System.out.println("readerIndex..........."+(bufferMsg.readerIndex()-4));
+                        ByteBuf bufferSubMsg = bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize);
+                        bufferSubMsg.skipBytes(readerindex-1);
 
-                        topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
+
                         MessageParser.parseMessage(topicName,  -1L,
-                                -1L,bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize),(message) -> {
+                                -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
                                 });
 
