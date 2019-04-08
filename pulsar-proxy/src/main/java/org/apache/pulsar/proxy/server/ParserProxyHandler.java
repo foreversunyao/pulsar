@@ -206,15 +206,18 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
                     buffer.resetReaderIndex();
+
+                    int writerIndexMsg = buffer.writerIndex();
+                    buffer.writerIndex(buffer.readerIndex() + cmdSize);
                     while(buffer.readableBytes()>0){
                         msgSize = buffer.readInt();
                         bufferSubMsg = buffer.copy(buffer.readerIndex()-4,buffer.readerIndex()+msgSize);
-                        System.out.println(buffer.readerIndex()-4+"#"+buffer.readerIndex()+"#"+msgSize+"#"+buffer.readableBytes());
-                        System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex())+" "+" "+bufferSubMsg.readableBytes());
+                        System.out.println(buffer.readerIndex()-4+"#"+buffer.readerIndex()+"#"+msgSize+"#"+buffer.readableBytes()+"#"+buffer.writerIndex());
+                        System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex())+" "+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         bufferSubMsg.skipBytes(4);
                         cmdMsgSize=bufferSubMsg.readInt();
                         bufferSubMsg.skipBytes(cmdMsgSize);
-                        System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdSize+" "+bufferSubMsg.readableBytes());
+                        System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdSize+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
