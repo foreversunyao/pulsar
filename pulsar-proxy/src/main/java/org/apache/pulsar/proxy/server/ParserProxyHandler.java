@@ -171,9 +171,14 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     int msgSize;
                     int cmdMsgSize;
                     ByteBuf bufferSubMsg = buffer;
-                    buffer.resetReaderIndex();
+
 
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
+
+                    /**
+                    buffer.resetReaderIndex();
+
+
                     for(int i=0;i<buffer.readableBytes();i++) {
                         System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
@@ -184,7 +189,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 messages.add(message);
                             });
 
-
+**/
                     System.out.println("#############");
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,bufferSubMsg,(message) -> {
