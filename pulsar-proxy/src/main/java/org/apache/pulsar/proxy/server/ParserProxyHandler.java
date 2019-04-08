@@ -138,6 +138,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     System.out.println();
                     System.out.print(new String(ByteBufUtil.getBytes(buffer),"UTF8"));
                     System.out.println();
+                    cmd.getSend().getNumMessages();
                     topicName = TopicName.get(ParserProxyHandler.producerHashMap.get(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id())));
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,buffer,(message) -> {
@@ -160,24 +161,18 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
-                    System.out.println("message..............");
-                    System.out.println(ByteBufUtil.hexDump(buffer));
 
-                    for (int i=0;i<buffer.capacity();i++){
-                        System.out.print(String.format("%02X ", buffer.getByte(i)));
+                    ByteBuf bufferMsg = buffer;
+                    int msgSize;
+                    while(bufferMsg.readableBytes()>0){
+                        msgSize = (int) bufferMsg.readUnsignedInt();
+                        MessageParser.parseMessage(topicName,  -1L,
+                                -1L,bufferMsg.slice(bufferMsg.readerIndex()-4,bufferMsg.readerIndex()+msgSize),(message) -> {
+                                    messages.add(message);
+                                });
+                        bufferMsg.skipBytes(msgSize);
+                        logging(ctx.channel(),cmd.getType(),"",messages);
                     }
-
-                    System.out.println();
-
-                    System.out.print(new String(ByteBufUtil.getBytes(buffer),"UTF8"));
-                    System.out.println();
-                    topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
-                    MessageParser.parseMessage(topicName,  -1L,
-                            -1L,buffer,(message) -> {
-                                messages.add(message);
-                            });
-
-                    logging(ctx.channel(),cmd.getType(),"",messages);
                     cmd.getMessage().recycle();
                     break;
 
