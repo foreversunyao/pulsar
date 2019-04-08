@@ -201,7 +201,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 **/
                     buffer.resetReaderIndex();
 
-                    ByteBuf bufferSubMsg;
+                    //ByteBuf bufferSubMsg;
                     for(int i=0;i<buffer.readableBytes();i++) {
                         System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
@@ -213,15 +213,15 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     while(buffer.readableBytes()>0){
                         msgSize = buffer.readInt();
-                        bufferSubMsg = buffer.copy(buffer.readerIndex()-4,buffer.readerIndex()+msgSize);
-                        System.out.println(buffer.readerIndex()-4+"#"+buffer.readerIndex()+"#"+msgSize+"#"+buffer.readableBytes()+"#"+buffer.writerIndex());
+                        ByteBuf bufferSubMsg = buffer.copy(buffer.readerIndex()-4,buffer.readerIndex()+msgSize);
+                        System.out.println(buffer.readerIndex()-4+"#buffer.readerIndex:"+buffer.readerIndex()+"#msgSize:"+msgSize+"#readableBytes:"+buffer.readableBytes()+"#"+buffer.writerIndex());
 
                         bufferSubMsg.skipBytes(lastReaderIndex);
-                        System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex())+" "+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
+                        System.out.println("readerIndex 1 ...........bufferSubMsg.readerIndex:"+(bufferSubMsg.readerIndex())+" readableBytes:"+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         bufferSubMsg.skipBytes(4);
                         cmdMsgSize=bufferSubMsg.readInt();
                         bufferSubMsg.skipBytes(cmdMsgSize);
-                        System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdMsgSize+" "+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
+                        System.out.println("readerIndex 2 ...........bufferSubMsg.readerIndex:"+(bufferSubMsg.readerIndex())+" cmdMsgSize:"+cmdMsgSize+" readableBytes:"+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
                                     messages.add(message);
