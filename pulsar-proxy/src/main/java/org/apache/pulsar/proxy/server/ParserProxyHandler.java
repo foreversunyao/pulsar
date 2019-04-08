@@ -181,7 +181,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                     messages.add(message);
                                 });
                          **/
-                        //bufferMsg.skipBytes(msgSize);
+                        bufferMsg.skipBytes(msgSize);
                         logging(ctx.channel(),cmd.getType(),"",messages);
                     }
                     cmd.getMessage().recycle();
