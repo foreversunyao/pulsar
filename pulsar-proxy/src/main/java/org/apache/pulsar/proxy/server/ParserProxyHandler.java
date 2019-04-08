@@ -191,21 +191,20 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
 **/
                     System.out.println("#############");
+                    /**
                     MessageParser.parseMessage(topicName,  -1L,
                             -1L,bufferSubMsg,(message) -> {
                                 messages.add(message);
                             });
 
                     System.out.println("readablebytes........."+bufferSubMsg.readableBytes());
-
-                    /**
+**/
+                    buffer.resetReaderIndex();
                     while(buffer.readableBytes()>0){
                         msgSize = buffer.readInt();
-                        System.out.println("msgSize..........."+msgSize);
-                        System.out.println("readerIndex..........."+(buffer.readerIndex()));
                         ByteBuf bufferSubMsg = buffer.slice(buffer.readerIndex()-4,buffer.readerIndex()-4+msgSize);
-                        System.out.println("bufferSubMsg readerindex....."+bufferSubMsg.readerIndex()+" "+bufferSubMsg.capacity());
-                        bufferSubMsg.skipBytes(4);;
+
+                        bufferSubMsg.skipBytes(4);
                         cmdMsgSize=bufferSubMsg.readInt();
                         bufferSubMsg.skipBytes(cmdMsgSize);
                         System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex())+" "+cmdSize);
@@ -215,8 +214,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 });
                         logging(ctx.channel(),cmd.getType(),"",messages);
                         buffer.skipBytes(msgSize-4);
+                        System.out.println("buffer readerindex and ........"+buffer.readerIndex()+"#"+buffer.readableBytes());
                     }
-                     **/
+
                     logging(ctx.channel(),cmd.getType(),"",messages);
                     cmd.getMessage().recycle();
                     break;
