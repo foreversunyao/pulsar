@@ -100,6 +100,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             }**/
             System.out.println("");
             System.out.println("block....");
+            System.out.println("0.reader index..."+buffer.readerIndex());
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
