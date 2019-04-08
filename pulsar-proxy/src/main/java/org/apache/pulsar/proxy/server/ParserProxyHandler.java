@@ -186,7 +186,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         bufferSubMsg.skipBytes(4);
                         System.out.println("readerIndex 1 ..........."+(bufferSubMsg.readerIndex()));
                         cmdMsgSize=bufferSubMsg.readInt();
-                        bufferSubMsg.skipBytes(cmdMsgSize);
+                        bufferSubMsg.skipBytes(cmdMsgSize-1);
                         System.out.println("readerIndex 2 ..........."+(bufferSubMsg.readerIndex()));
                         MessageParser.parseMessage(topicName,  -1L,
                                 -1L,bufferSubMsg,(message) -> {
