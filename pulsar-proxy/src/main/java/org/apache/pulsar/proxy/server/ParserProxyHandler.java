@@ -209,19 +209,17 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     //int writerIndexMsg = buffer.writerIndex();
                     //buffer.writerIndex(buffer.readerIndex() + cmdSize);
-                    int lastReaderIndex=0;
+
 
                     while(buffer.readableBytes()>0){
                         msgSize = buffer.readInt();
-                        System.out.println(buffer.readerIndex()-4+"#buffer.readerIndex:"+buffer.readerIndex()+"#msgSize:"+msgSize+"#readableBytes:"+buffer.readableBytes()+"#"+buffer.writerIndex());
+                       // System.out.println(buffer.readerIndex()-4+"#buffer.readerIndex:"+buffer.readerIndex()+"#msgSize:"+msgSize+"#readableBytes:"+buffer.readableBytes()+"#"+buffer.writerIndex());
 
                         ByteBuf bufferSubMsg = buffer.copy(buffer.readerIndex()-4,4+msgSize);
                         System.out.println("readerIndex 0 ...........bufferSubMsg.readerIndex:"+(bufferSubMsg.readerIndex())+" readableBytes:"+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
-                        for(int i=0;i<bufferSubMsg.readableBytes();i++) {
-                            System.out.print(String.format("%02X ", bufferSubMsg.getByte(i)));
-                        }
 
-                        bufferSubMsg.skipBytes(lastReaderIndex);
+
+
                         System.out.println("readerIndex 1 ...........bufferSubMsg.readerIndex:"+(bufferSubMsg.readerIndex())+" readableBytes:"+bufferSubMsg.readableBytes()+" "+bufferSubMsg.writerIndex());
                         bufferSubMsg.skipBytes(4);
                         cmdMsgSize=bufferSubMsg.readInt();
@@ -233,7 +231,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                                 });
                         logging(ctx.channel(),cmd.getType(),"",messages);
                         buffer.skipBytes(msgSize);
-                        lastReaderIndex = buffer.readerIndex();
                         System.out.println("buffer readerindex and ........"+buffer.readerIndex()+"#"+buffer.readableBytes());
                     }
 
