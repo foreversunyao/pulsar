@@ -97,16 +97,17 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         List<RawMessage> messages = Lists.newArrayList();
         ByteBuf buffer = (ByteBuf)(msg);
 
-        System.out.println("#####reader_index:"+buffer.readerIndex()+" writer_index:"+buffer.writerIndex());
+        //System.out.println("#####reader_index:"+buffer.readerIndex()+" writer_index:"+buffer.writerIndex());
 
         //MessageMetadata msgMetadata = null;
         try {
             System.out.println("#0:"+ProxyService.proxylogLevel+" "+buffer.readableBytes());
 
+          /**
             for (int i =0; i< buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
-
+**/
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
@@ -200,26 +201,28 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
 
-            System.out.println();
-
+//            System.out.println();
+/**
             for (int i=0;i <buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
             System.out.println();
             System.out.println("1==============="+buffer.readableBytes());
+ **/
             ByteBuf totalSizeBuf = Unpooled.buffer(4);
 
             totalSizeBuf.writeInt(buffer.readableBytes());
-            System.out.println();
+           // System.out.println();
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
             compBuf.addComponents(totalSizeBuf,buffer);
             compBuf.writerIndex(4+buffer.readableBytes());
-            System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
+           // System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
+            /**
             for (int i=0;i <compBuf.readableBytes();i++){
                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
             }
             System.out.println();
-
+**/
             ctx.fireChannelRead(compBuf);
 
 
