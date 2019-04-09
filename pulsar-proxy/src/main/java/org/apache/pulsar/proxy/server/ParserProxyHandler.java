@@ -200,6 +200,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetWriterIndex();
 
             System.out.println();
+           /**
             for (int i=0;i <buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
@@ -217,7 +218,10 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
             }
             System.out.println();
+
             ctx.fireChannelRead(compBuf);
+            **/
+            ctx.fireChannelRead(msg);
         }
     }
 
