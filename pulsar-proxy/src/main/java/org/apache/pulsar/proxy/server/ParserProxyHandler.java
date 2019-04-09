@@ -101,7 +101,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
         //MessageMetadata msgMetadata = null;
         try {
-            System.out.println("#0:"+ProxyService.proxylogLevel+" "+buffer.readableBytes());
+           // System.out.println("#0:"+ProxyService.proxylogLevel+" "+buffer.readableBytes());
 
           /**
             for (int i =0; i< buffer.readableBytes();i++){
@@ -159,6 +159,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
+                    for (int i=0;i<buffer.readableBytes();i++){
+                        System.out.print(String.format("%02X ", buffer.getByte(i)));
+                    }
                     System.out.println("#2:"+ProxyService.proxylogLevel);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     int msgTotalSize;
@@ -171,7 +174,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                         msgTotalSize = buffer.readInt();
                         bufferSubMsg = buffer.copy(buffer.readerIndex()-4,4+msgTotalSize); //getSubMessageBuffer
-                        bufferSubMsg.skipBytes(4); //skip msgTotalSize buffer
+                        //bufferSubMsg.skipBytes(4); //skip msgTotalSize buffer
                         msgCmdSize=bufferSubMsg.readInt();
                         bufferSubMsg.skipBytes(msgCmdSize);
 
