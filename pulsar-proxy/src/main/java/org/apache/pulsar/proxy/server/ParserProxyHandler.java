@@ -112,7 +112,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-           // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            if (cmd.getType() == PulsarApi.BaseCommand.Type.PRODUCER || cmd.getType() == PulsarApi.BaseCommand.Type.SEND || cmd.getType() == PulsarApi.BaseCommand.Type.CLOSE_PRODUCER ) {
+                // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            } else{
+                buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            }
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
