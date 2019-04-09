@@ -118,6 +118,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
+
             buffer.writerIndex(buffer.readerIndex() + cmdSize);
             ByteBufCodedInputStream cmdInputStream = ByteBufCodedInputStream.get(buffer);
 
@@ -169,7 +170,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     ByteBuf bufferSubMsg;
 
                     buffer.resetReaderIndex(); //set ReaderIndex to 0
-
+                    System.out.println("#####writerIndex:"+writerIndex+" readerIndex:"+buffer.readerIndex(s));
                     while(buffer.readableBytes()>0){
 
                         msgTotalSize = buffer.readInt();
