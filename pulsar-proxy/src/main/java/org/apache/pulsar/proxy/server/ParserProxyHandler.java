@@ -163,29 +163,22 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
                     System.out.println("#2:"+ProxyService.proxylogLevel);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
-                    int msgTotalSize;
-                    int msgCmdSize;
-                    ByteBuf bufferSubMsg;
 
-                    buffer.resetReaderIndex(); //set ReaderIndex to 0
+                    //int metaSize;
+                    //ByteBuf bufferSubMsg;
+
+                    //buffer.resetReaderIndex(); //set ReaderIndex to 0
                     System.out.println("#####writerIndex:"+writerIndex+" readerIndex:"+buffer.readerIndex());
                     for (int i=0;i<buffer.readableBytes();i++){
                         System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
-                    while(buffer.readableBytes()>0){
 
-                        msgTotalSize = buffer.readInt();
-                        bufferSubMsg = buffer.copy(buffer.readerIndex()-4,4+msgTotalSize); //getSubMessageBuffer
-                        //bufferSubMsg.skipBytes(4); //skip msgTotalSize buffer
-                        msgCmdSize=bufferSubMsg.readInt();
-                        bufferSubMsg.skipBytes(msgCmdSize);
-
-                        MessageParser.parseMessage(topicName,  -1L,
-                                -1L,bufferSubMsg,(message) -> {
+                    MessageParser.parseMessage(topicName,  -1L,
+                                -1L,buffer,(message) -> {
                                     messages.add(message);
                                 });
-                        buffer.skipBytes(msgTotalSize); //skip to next Message if exists
-                    }
+                    //buffer.skipBytes(msgTotalSize); //skip to next Message if exists
+
                     logging(ctx.channel(),cmd.getType(),"",messages);
                     break;
 
