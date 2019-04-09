@@ -95,17 +95,19 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
         //MessageMetadata msgMetadata = null;
         try {
-            System.out.println("#0:"+ProxyService.proxylogLevel);
+            System.out.println("#0:"+ProxyService.proxylogLevel+" "+buffer.readableBytes());
 
             for (int i =0; i< buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
+
+            System.out.println("hex:"+Integer.toHexString(buffer.readableBytes()+4));
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-            buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+            //buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
