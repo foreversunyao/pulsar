@@ -35,6 +35,7 @@ import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
+import io.netty.buffer.Unpooled;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -102,9 +103,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             for (int i =0; i< buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
-            for (int i=0;i <4;i++){
-                System.out.print(String.format("%02X ", ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array()[i]));
-            }
+
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
@@ -195,9 +194,17 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
+            byte[] concat = new byte[4+buffer.readableBytes()];
+            System.arraycopy(ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array(),0,concat,0,ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array().length);
+            System.arraycopy(buffer.array(),0,concat,ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array().length,buffer.array().length);
 
+            ByteBuf buf = Unpooled.copiedBuffer(concat);
+            System.out.println("#######concat####");
+            for (int i=0;i <buf.readableBytes();i++){
+                System.out.print(String.format("%02X ", buf.getByte(i)));
+            }
+            ctx.fireChannelRead(buf);
         }
-        ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
