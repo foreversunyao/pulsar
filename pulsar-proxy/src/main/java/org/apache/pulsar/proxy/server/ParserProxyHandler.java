@@ -159,7 +159,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
-                    for (int i=0;i<buffer.readableBytes();i++){
+                    for (int i=0;i<buffer.capacity();i++){
                         System.out.print(String.format("%02X ", buffer.getByte(i)));
                     }
                     System.out.println("#2:"+ProxyService.proxylogLevel);
