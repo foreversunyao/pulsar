@@ -213,6 +213,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             System.out.println("2=============");
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
             compBuf.addComponents(totalSizeBuf,buffer);
+            compBuf.writerIndex(4+buffer.readableBytes());
             System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
             for (int i=0;i <compBuf.readableBytes();i++){
                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
