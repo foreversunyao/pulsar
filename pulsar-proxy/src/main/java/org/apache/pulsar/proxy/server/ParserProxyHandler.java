@@ -112,11 +112,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-            if (cmd.getType() == PulsarApi.BaseCommand.Type.PRODUCER || cmd.getType() == PulsarApi.BaseCommand.Type.SEND || cmd.getType() == PulsarApi.BaseCommand.Type.CLOSE_PRODUCER ) {
-                // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
-            } else{
-                buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
-            }
+            // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
@@ -204,29 +201,29 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetWriterIndex();
 
             System.out.println();
-            if (cmd.getType() == PulsarApi.BaseCommand.Type.PRODUCER || cmd.getType() == PulsarApi.BaseCommand.Type.SEND || cmd.getType() == PulsarApi.BaseCommand.Type.CLOSE_PRODUCER ){
 
-                 for (int i=0;i <buffer.readableBytes();i++){
-                 System.out.print(String.format("%02X ", buffer.getByte(i)));
-                 }
-                 System.out.println();
-                 System.out.println("1==============="+buffer.readableBytes());
-                 ByteBuf totalSizeBuf = Unpooled.buffer(4);
-
-                 totalSizeBuf.writeInt(buffer.readableBytes());
-                 System.out.println();
-                 CompositeByteBuf compBuf = Unpooled.compositeBuffer();
-                 compBuf.addComponents(totalSizeBuf,buffer);
-                 compBuf.writerIndex(4+buffer.readableBytes());
-                 System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
-                 for (int i=0;i <compBuf.readableBytes();i++){
-                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
-                 }
-                 System.out.println();
-
-                 ctx.fireChannelRead(compBuf);
-
+            for (int i=0;i <buffer.readableBytes();i++){
+                System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
+            System.out.println();
+            System.out.println("1==============="+buffer.readableBytes());
+            ByteBuf totalSizeBuf = Unpooled.buffer(4);
+
+            totalSizeBuf.writeInt(buffer.readableBytes());
+            System.out.println();
+            CompositeByteBuf compBuf = Unpooled.compositeBuffer();
+            compBuf.addComponents(totalSizeBuf,buffer);
+            compBuf.writerIndex(4+buffer.readableBytes());
+            System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
+            for (int i=0;i <compBuf.readableBytes();i++){
+                System.out.print(String.format("%02X ", compBuf.getByte(i)));
+            }
+            System.out.println();
+
+            ctx.fireChannelRead(compBuf);
+
+
+
 
 
         }
