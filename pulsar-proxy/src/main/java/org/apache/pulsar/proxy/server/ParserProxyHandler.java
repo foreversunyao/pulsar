@@ -35,6 +35,8 @@ import org.apache.pulsar.common.util.protobuf.ByteBufCodedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
+
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -100,8 +102,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             for (int i =0; i< buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
-
-            System.out.println("hex:"+Integer.toHexString(buffer.readableBytes()).getBytes());
+            for (int i=0;i <4;i++){
+                System.out.print(String.format("%02X ", ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array()[i]));
+            }
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
