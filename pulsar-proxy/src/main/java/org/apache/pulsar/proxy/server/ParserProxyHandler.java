@@ -101,7 +101,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
 
-            System.out.println("hex:"+Integer.toHexString(buffer.readableBytes()+4));
+            System.out.println("hex:"+Integer.toHexString(buffer.readableBytes()).getBytes());
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
