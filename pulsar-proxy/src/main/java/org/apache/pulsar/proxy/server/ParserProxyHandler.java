@@ -96,6 +96,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         TopicName topicName = null;
         List<RawMessage> messages = Lists.newArrayList();
         ByteBuf buffer = (ByteBuf)(msg);
+
         System.out.println("#####reader_index:"+buffer.readerIndex()+" writer_index:"+buffer.writerIndex());
 
         //MessageMetadata msgMetadata = null;
@@ -122,6 +123,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
+            System.out.println(cmd.getType());
             switch (cmd.getType()) {
                 case PRODUCER:
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
@@ -197,6 +199,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
 
+            System.out.println();
             for (int i=0;i <buffer.readableBytes();i++){
                 System.out.print(String.format("%02X ", buffer.getByte(i)));
             }
@@ -205,10 +208,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             ByteBuf totalSizeBuf = Unpooled.buffer(4);
 
             totalSizeBuf.writeInt(buffer.readableBytes());
-            System.out.println(totalSizeBuf.readerIndex()+" "+totalSizeBuf.writerIndex());
-            for (int i=0;i <totalSizeBuf.readableBytes();i++){
-                System.out.print(String.format("%02X ", totalSizeBuf.getByte(i)));
-            }
             System.out.println();
             System.out.println("2=============");
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
