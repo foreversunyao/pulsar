@@ -221,8 +221,9 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
             ctx.fireChannelRead(compBuf);
             **/
-            ctx.fireChannelRead(msg);
+
         }
+        ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
