@@ -203,7 +203,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             for (int i=0;i< ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array().length;i++){
                 System.out.println(ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array()[i]);
             }
-            totalSizeBuf.writeBytes(ByteBuffer.allocate(4).putInt(buffer.readableBytes()));
+            totalSizeBuf.writeInt(buffer.readableBytes());
             System.out.println(totalSizeBuf.readerIndex()+" "+totalSizeBuf.writerIndex());
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
 
