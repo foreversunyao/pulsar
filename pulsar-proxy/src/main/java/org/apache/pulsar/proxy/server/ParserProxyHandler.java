@@ -25,6 +25,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import org.apache.pulsar.common.api.PulsarDecoder;
 import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.raw.MessageParser;
 import org.apache.pulsar.common.api.raw.RawMessage;
@@ -47,6 +49,8 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     public static final String backendConn = "backendconn";
 
     private String connType;
+    //LengthFieldBasedFrameDecoder lengthFieldBasedFrameDecoder = new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4);
+
 
 
     //producerid/consumerid+channelid as key
@@ -186,6 +190,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
+
         }
         ctx.fireChannelRead(msg);
     }
