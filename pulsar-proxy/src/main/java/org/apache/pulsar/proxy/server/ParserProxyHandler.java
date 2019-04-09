@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import io.netty.buffer.Unpooled;
+import io.netty.buffer.CompositeByteBuf;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -95,6 +96,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
         TopicName topicName = null;
         List<RawMessage> messages = Lists.newArrayList();
         ByteBuf buffer = (ByteBuf)(msg);
+        System.out.println("#####reader_index:"+buffer.readerIndex()+" writer_index:"+buffer.writerIndex());
 
         //MessageMetadata msgMetadata = null;
         try {
@@ -194,13 +196,20 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             }
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
-            System.out.println("1==============="+ByteBuffer.allocate(4).putInt(buffer.readableBytes()));
-            ByteBuf buf = Unpooled.copiedBuffer((ByteBuffer.allocate(4).putInt(buffer.readableBytes())).array(),buffer.array());
-            System.out.println("#######concat####");
-            for (int i=0;i <buf.readableBytes();i++){
-                System.out.print(String.format("%02X ", buf.getByte(i)));
+
+            System.out.println("1==============="+buffer.readableBytes()+" "+ByteBuffer.allocate(4).putInt(buffer.readableBytes()));
+            CompositeByteBuf compBuf = Unpooled.compositeBuffer();
+            compBuf.readBytes(ByteBuffer.allocate(4).putInt(buffer.readableBytes()));
+            for (int i=0;i <compBuf.readableBytes();i++){
+                System.out.print(String.format("%02X ", compBuf.getByte(i)));
             }
-            ctx.fireChannelRead(buf);
+            System.out.println("2=============");
+            compBuf.addComponent(buffer);
+            System.out.println("#######concat####");
+            for (int i=0;i <compBuf.readableBytes();i++){
+                System.out.print(String.format("%02X ", compBuf.getByte(i)));
+            }
+            ctx.fireChannelRead(compBuf);
         }
     }
 
