@@ -226,10 +226,10 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-               // if (ProxyService.proxylogLevel==0) {
+                if (ProxyService.proxylogLevel==0) {
                     inboundChannel.pipeline().remove("frameDecoder");
                     outboundChannel.pipeline().remove("frameDecoder");
-                //}
+                }
                 //Enable parsing logic for proxyLogLevel(==1 or 2)
                 if (ProxyService.proxylogLevel == 1 || ProxyService.proxylogLevel == 2) {
 
