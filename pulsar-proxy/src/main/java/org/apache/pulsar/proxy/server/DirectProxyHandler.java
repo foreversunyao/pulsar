@@ -226,11 +226,13 @@ public class DirectProxyHandler {
                 if (log.isDebugEnabled()) {
                     log.debug("[{}] [{}] Removing decoder from pipeline", inboundChannel, outboundChannel);
                 }
-                inboundChannel.pipeline().remove("frameDecoder");
-                outboundChannel.pipeline().remove("frameDecoder");
-
+                if (ProxyService.proxylogLevel==0) {
+                    inboundChannel.pipeline().remove("frameDecoder");
+                    outboundChannel.pipeline().remove("frameDecoder");
+                }
                 //Enable parsing logic for proxyLogLevel(==1 or 2)
                 if (ProxyService.proxylogLevel == 1 || ProxyService.proxylogLevel == 2) {
+
                     // Added parser handler
                     inboundChannel.pipeline().addBefore("handler", "inboundParser", new ParserProxyHandler(inboundChannel, ParserProxyHandler.frontendConn));
                     outboundChannel.pipeline().addBefore("proxyOutboundHandler", "outboundParser", new ParserProxyHandler(outboundChannel, ParserProxyHandler.backendConn));
