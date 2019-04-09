@@ -168,7 +168,6 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
             }
 
-
         } catch (Exception e){
             log.error("{},{},{}",e.getMessage(),e.getStackTrace(),e.getCause());
         }finally {

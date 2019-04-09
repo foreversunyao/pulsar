@@ -177,7 +177,7 @@ admin.persistentTopics().getList(namespace);
   "msgThroughputIn": 44663039.74947473,
   "msgRateOut": 0,
   "msgThroughputOut": 0,
-  "averageMsgSize": 1232439.816728665,
+  "averagemsgTotalSize": 1232439.816728665,
   "storageSize": 135532389160,
   "publishers": [
     {
