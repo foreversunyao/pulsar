@@ -25,8 +25,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import org.apache.pulsar.common.api.PulsarDecoder;
 import org.apache.pulsar.common.api.proto.PulsarApi;
 import org.apache.pulsar.common.api.raw.MessageParser;
 import org.apache.pulsar.common.api.raw.RawMessage;
@@ -37,8 +35,6 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.CompositeByteBuf;
-import org.apache.pulsar.common.api.proto.PulsarApi;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -48,14 +44,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
 
     private Channel channel;
-    private static final int lengthFieldLength = 4;
+
     public static final String frontendConn = "frontendconn";
     public static final String backendConn = "backendconn";
 
     private String connType;
-    //LengthFieldBasedFrameDecoder lengthFieldBasedFrameDecoder = new LengthFieldBasedFrameDecoder(PulsarDecoder.MaxFrameSize, 0, 4, 0, 4);
-
-
 
     //producerid/consumerid+channelid as key
     private static Map<String, String> producerHashMap = new ConcurrentHashMap<>();
@@ -93,29 +86,14 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         PulsarApi.BaseCommand cmd = null;
         PulsarApi.BaseCommand.Builder cmdBuilder = null;
-        TopicName topicName = null;
+        TopicName topicName;
         List<RawMessage> messages = Lists.newArrayList();
         ByteBuf buffer = (ByteBuf)(msg);
 
-        //System.out.println("#####reader_index:"+buffer.readerIndex()+" writer_index:"+buffer.writerIndex());
-
-        //MessageMetadata msgMetadata = null;
         try {
-           // System.out.println("#0:"+ProxyService.proxylogLevel+" "+buffer.readableBytes());
 
-          /**
-            for (int i =0; i< buffer.readableBytes();i++){
-                System.out.print(String.format("%02X ", buffer.getByte(i)));
-            }
-**/
-            //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
-
-            //skip lengthFieldLength
-            // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
-
-
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
 
@@ -155,29 +133,16 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
 
                 case MESSAGE:
-                    System.out.println("#1:"+ProxyService.proxylogLevel);
                     if (ProxyService.proxylogLevel !=2){
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
 
-                    System.out.println("#2:"+ProxyService.proxylogLevel);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
-
-                    //int metaSize;
-                    //ByteBuf bufferSubMsg;
-
-                    //buffer.resetReaderIndex(); //set ReaderIndex to 0
-                    System.out.println("#####writerIndex:"+writerIndex+" readerIndex:"+buffer.readerIndex());
-                    for (int i=0;i<buffer.readableBytes();i++){
-                        System.out.print(String.format("%02X ", buffer.getByte(i)));
-                    }
-
                     MessageParser.parseMessage(topicName,  -1L,
                                 -1L,buffer,(message) -> {
                                     messages.add(message);
                                 });
-                    //buffer.skipBytes(msgTotalSize); //skip to next Message if exists
 
                     logging(ctx.channel(),cmd.getType(),"",messages);
                     break;
@@ -199,36 +164,16 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
 
-//            System.out.println();
-/**
-            for (int i=0;i <buffer.readableBytes();i++){
-                System.out.print(String.format("%02X ", buffer.getByte(i)));
-            }
-            System.out.println();
-            System.out.println("1==============="+buffer.readableBytes());
- **/
+            // add totalSize Head
             ByteBuf totalSizeBuf = Unpooled.buffer(4);
-
             totalSizeBuf.writeInt(buffer.readableBytes());
-           // System.out.println();
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
             compBuf.addComponents(totalSizeBuf,buffer);
-            compBuf.writerIndex(4+buffer.readableBytes());
-           // System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
-            /**
-            for (int i=0;i <compBuf.readableBytes();i++){
-                System.out.print(String.format("%02X ", compBuf.getByte(i)));
-            }
-            System.out.println();
-**/
+            //compBuf.writerIndex(4+buffer.readableBytes());
+            compBuf.writerIndex(totalSizeBuf.capacity()+buffer.capacity());
             ctx.fireChannelRead(compBuf);
 
-
-
-
-
         }
-        //ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
