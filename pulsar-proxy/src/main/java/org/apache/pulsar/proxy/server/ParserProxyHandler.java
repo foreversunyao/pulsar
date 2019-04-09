@@ -91,6 +91,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
 
         //MessageMetadata msgMetadata = null;
         try {
+            System.out.println("#0:"+ProxyService.proxylogLevel);
             //
             buffer.markReaderIndex();
             buffer.markWriterIndex();
@@ -135,10 +136,12 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
                     break;
 
                 case MESSAGE:
+                    System.out.println("#1:"+ProxyService.proxylogLevel);
                     if (ProxyService.proxylogLevel !=2){
                         logging(ctx.channel(),cmd.getType(),"",null);
                         break;
                     }
+                    System.out.println("#1:"+ProxyService.proxylogLevel);
                     topicName = TopicName.get(ParserProxyHandler.consumerHashMap.get(String.valueOf(cmd.getMessage().getConsumerId())+","+DirectProxyHandler.inboundOutboundChannelMap.get(ctx.channel().id())));
                     int msgTotalSize;
                     int msgCmdSize;
