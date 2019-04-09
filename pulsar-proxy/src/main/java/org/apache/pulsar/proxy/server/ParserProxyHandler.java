@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.CompositeByteBuf;
-
+import org.apache.pulsar.common.api.proto.PulsarApi;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,7 +112,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.markWriterIndex();
 
             //skip lengthFieldLength
-            buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
+           // buffer.readerIndex(ParserProxyHandler.lengthFieldLength);
 
             int cmdSize = (int) buffer.readUnsignedInt();
             int writerIndex = buffer.writerIndex();
@@ -200,30 +200,33 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetWriterIndex();
 
             System.out.println();
-           /**
-            for (int i=0;i <buffer.readableBytes();i++){
-                System.out.print(String.format("%02X ", buffer.getByte(i)));
-            }
-            System.out.println();
-            System.out.println("1==============="+buffer.readableBytes());
-            ByteBuf totalSizeBuf = Unpooled.buffer(4);
+            if (cmd.getType() == PulsarApi.BaseCommand.Type.PRODUCER || cmd.getType() == PulsarApi.BaseCommand.Type.SEND || cmd.getType() == PulsarApi.BaseCommand.Type.CLOSE_PRODUCER ){
 
-            totalSizeBuf.writeInt(buffer.readableBytes());
-            System.out.println();
-            CompositeByteBuf compBuf = Unpooled.compositeBuffer();
-            compBuf.addComponents(totalSizeBuf,buffer);
-            compBuf.writerIndex(4+buffer.readableBytes());
-            System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
-            for (int i=0;i <compBuf.readableBytes();i++){
-                System.out.print(String.format("%02X ", compBuf.getByte(i)));
-            }
-            System.out.println();
+                 for (int i=0;i <buffer.readableBytes();i++){
+                 System.out.print(String.format("%02X ", buffer.getByte(i)));
+                 }
+                 System.out.println();
+                 System.out.println("1==============="+buffer.readableBytes());
+                 ByteBuf totalSizeBuf = Unpooled.buffer(4);
 
-            ctx.fireChannelRead(compBuf);
-            **/
+                 totalSizeBuf.writeInt(buffer.readableBytes());
+                 System.out.println();
+                 CompositeByteBuf compBuf = Unpooled.compositeBuffer();
+                 compBuf.addComponents(totalSizeBuf,buffer);
+                 compBuf.writerIndex(4+buffer.readableBytes());
+                 System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex()+" "+compBuf.writerIndex());
+                 for (int i=0;i <compBuf.readableBytes();i++){
+                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
+                 }
+                 System.out.println();
+
+                 ctx.fireChannelRead(compBuf);
+
+            }
+
 
         }
-        ctx.fireChannelRead(msg);
+        //ctx.fireChannelRead(msg);
     }
 
     private static final Logger log = LoggerFactory.getLogger(ParserProxyHandler.class);
