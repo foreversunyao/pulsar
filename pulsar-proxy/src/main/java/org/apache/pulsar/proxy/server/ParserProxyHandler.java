@@ -104,7 +104,7 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             cmd = cmdBuilder.mergeFrom(cmdInputStream, null).build();
             buffer.writerIndex(writerIndex);
             cmdInputStream.recycle();
-            System.out.println(cmd.getType());
+
             switch (cmd.getType()) {
                 case PRODUCER:
                     ParserProxyHandler.producerHashMap.put(String.valueOf(cmd.getProducer().getProducerId())+","+String.valueOf(ctx.channel().id()),cmd.getProducer().getTopic());
@@ -164,12 +164,11 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
 
-            // add totalSize Head
+            // add totalSize to buffer Head
             ByteBuf totalSizeBuf = Unpooled.buffer(4);
             totalSizeBuf.writeInt(buffer.readableBytes());
             CompositeByteBuf compBuf = Unpooled.compositeBuffer();
             compBuf.addComponents(totalSizeBuf,buffer);
-            //compBuf.writerIndex(4+buffer.readableBytes());
             compBuf.writerIndex(totalSizeBuf.capacity()+buffer.capacity());
             ctx.fireChannelRead(compBuf);
 
