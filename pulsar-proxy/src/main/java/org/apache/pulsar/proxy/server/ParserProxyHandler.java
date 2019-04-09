@@ -197,22 +197,22 @@ public class ParserProxyHandler extends ChannelInboundHandlerAdapter {
             buffer.resetReaderIndex();
             buffer.resetWriterIndex();
 
+            for (int i=0;i <buffer.readableBytes();i++){
+                System.out.print(String.format("%02X ", buffer.getByte(i)));
+            }
             System.out.println("1==============="+buffer.readableBytes()+" "+ByteBuffer.allocate(4).putInt(buffer.readableBytes()));
             ByteBuf totalSizeBuf = Unpooled.buffer(4);
 
-            for (int i=0;i< ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array().length;i++){
-                System.out.println(ByteBuffer.allocate(4).putInt(buffer.readableBytes()).array()[i]);
-            }
             totalSizeBuf.writeInt(buffer.readableBytes());
             System.out.println(totalSizeBuf.readerIndex()+" "+totalSizeBuf.writerIndex());
-            CompositeByteBuf compBuf = Unpooled.compositeBuffer();
-
             for (int i=0;i <totalSizeBuf.readableBytes();i++){
                 System.out.print(String.format("%02X ", totalSizeBuf.getByte(i)));
             }
+
             System.out.println("2=============");
+            CompositeByteBuf compBuf = Unpooled.compositeBuffer();
             compBuf.addComponents(totalSizeBuf,buffer);
-            System.out.println("#######concat####");
+            System.out.println("#######concat#### "+compBuf.readableBytes()+" "+compBuf.readerIndex());
             for (int i=0;i <compBuf.readableBytes();i++){
                 System.out.print(String.format("%02X ", compBuf.getByte(i)));
             }
